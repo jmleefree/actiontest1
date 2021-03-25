@@ -7,5 +7,5 @@ func Sum(x int, y int) int {
 }
 
 func main() {
-	fmt.Printf("result : %d\n", Sum(5, 5))
+	fmt.Printf("result : %d\n", Sum(5, 6))
 }
