@@ -14,6 +14,6 @@ func Multiply(x int, y int) int {
 
 func main() {
 	fmt.Printf("result : %d\n", Sum(5, 6))
-	game_version := 3
-	fmt.Printf("Super Mario %s\n", game_version)
+	//game_version := 3
+	//fmt.Printf("Super Mario %s\n", game_version)
 }
