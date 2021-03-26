@@ -33,7 +33,7 @@ jobs:
       - name: create review comment
         uses: andrewmusgrave/automatic-pull-request-review@0.0.2
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: "${{ secrets.TOKEN }}"
           event: COMMENT
           body: "comment ..."
 
