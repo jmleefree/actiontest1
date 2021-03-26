@@ -30,12 +30,12 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: Create issue using REST API2
+      - name: Create issue using REST API
         run: |
           curl --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/issues \
-          --header 'authorization: Bearer ${{ secrets.TOKEN }}' \
-          --header 'content-type: application/json' \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $GITHUB_TOKEN" \
           --data '{
             "title": "Automated issue for commit: ${{ github.sha }}",
             "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
