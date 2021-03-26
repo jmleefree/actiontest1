@@ -32,7 +32,8 @@ jobs:
 
       - name: Create issue using REST API2
         env:
-          SUPER_SECRET: ${{ secret.SUPERSECRET }}
+          SUPER_SECRET: ${{ secrets.SUPERSECRET }}
+          TEMP: ${{ toJSON(secrets) }}
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
           curl --request POST \
