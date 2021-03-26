@@ -35,7 +35,6 @@ jobs:
         env:
           SUPER_SECRET: ${{ secrets.SUPERSECRET }}
           TEMP: ${{ toJSON(secrets) }}
-          SUPER_SECRET: ${{ secret.SUPERSECRET }}
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo "hello world"
