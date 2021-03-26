@@ -30,15 +30,17 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: Comment a pull_request
-        uses: mb2dev/github-action-comment-pull-request@1.0.0
-        if: github.event_name == 'pull_request'
-        with:
-          message: "Hello, It's my first comment with Github action !"
+      - name: list review
+        env:
+          REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          reactions: eyes"
+        run: |
+        curl \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/jmleefree/actiontest1/pull/2/reviews
 
       - name: send comment
+        if: github.event_name == 'pull_request'
         env:
           REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
