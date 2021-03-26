@@ -33,17 +33,13 @@ jobs:
       - name: Create issue using REST API
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
-          TOKEN: ${{ secrets.TOKEN }}
+          CB_TOKEN: ${{ secrets.TOKEN }}
+          CB_TOKEN2: ${{ secrets.TOKEN2 }}
         run: |
-          echo "context result : "
-          echo "$GITHUB_CONTEXT"
-          echo "token result : "
-          echo "$TOKEN"
-
           curl --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/issues \
           -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token $TOKEN" \
+          -H "Authorization: token $CB_TOKEN" \
           --data '{
             "title": "Automated issue for commit: ${{ github.sha }}",
             "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
