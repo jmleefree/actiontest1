@@ -30,7 +30,7 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: env display
+      - name: env display2
         env:
           SUPER_SECRET: ${{ secrets.SUPERSECRET }}
           TEMP: ${{ toJSON(secrets) }}
