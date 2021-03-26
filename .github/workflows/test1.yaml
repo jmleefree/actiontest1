@@ -32,8 +32,14 @@ jobs:
 
       - name: Create issue using REST API
         env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
           TOKEN: ${{ secrets.TOKEN }}
         run: |
+          echo "context result : "
+          echo "$GITHUB_CONTEXT"
+          echo "token result : "
+          echo "$TOKEN"
+
           curl --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/issues \
           -H "Accept: application/vnd.github.v3+json" \
