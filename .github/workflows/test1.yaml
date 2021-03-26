@@ -30,7 +30,7 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: Create issue using REST API2
+      - name: Create issue using REST API3
         env:
           SUPER_SECRET: ${{ secrets.SUPERSECRET }}
           TEMP: ${{ toJSON(secrets) }}
