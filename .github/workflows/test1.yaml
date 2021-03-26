@@ -23,8 +23,18 @@ jobs:
         with:
           go-version: ^1.13
 
+      - name: PR head repo
+        id: head_repo_name
+        run: |
+          HEAD_REPO_NAME=$(jq -r '.pull_request.head.repo.full_name' "$GITHUB_EVENT_PATH")
+          echo "PR head repo: $HEAD_REPO_NAME"
+          echo "::set-output name=repo::$HEAD_REPO_NAME"
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+        with:
+          repository: ${{ steps.head_repo_name.outputs.repo }}
+          fetch-depth: 0
 
       - name: Lint
         run: |
