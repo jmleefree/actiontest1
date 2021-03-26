@@ -31,13 +31,10 @@ jobs:
         run: go test -v ./...
 
       - name: list review
-        env:
-          REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-        curl \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/jmleefree/actiontest1/pull/2/reviews
+          curl \
+            https://api.github.com/repos/jmleefree/actiontest1/pull/2/reviews \
+            -H "Accept: application/vnd.github.v3+json"
 
       - name: send comment
         if: github.event_name == 'pull_request'
