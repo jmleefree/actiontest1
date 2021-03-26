@@ -31,7 +31,6 @@ jobs:
         run: go test -v ./...
 
       - name: Display Env
-      - name: Create issue using REST API2
         env:
           SUPER_SECRET: ${{ secrets.SUPERSECRET }}
           TEMP: ${{ toJSON(secrets) }}
