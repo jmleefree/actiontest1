@@ -11,6 +11,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ secrets }}
+        run: |
+          echo "workflow starting..."
+
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
@@ -18,6 +25,9 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: Lint
         run: |
@@ -29,9 +39,3 @@ jobs:
 
       - name: Test
         run: go test -v ./...
-
-      - name: env display 8888
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: |
-          echo "hello world"
