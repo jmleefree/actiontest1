@@ -14,7 +14,7 @@ jobs:
       - name: Check Environment variable
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ secrets }}
+          SECRETS: ${{ toJSON(secrets) }}
         run: |
           echo "workflow starting..."
 
