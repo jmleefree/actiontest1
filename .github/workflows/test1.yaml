@@ -29,3 +29,30 @@ jobs:
 
       - name: Test
         run: go test -v ./...
+
+      - name: Create issue using REST API
+        env:
+          SUPER_SECRET: ${{ secrets.SuperSecret }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          curl --request POST \
+          --url https://api.github.com/repos/${{ github.repository }}/issues \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token $SUPER_SECRET" \
+          --data '{
+            "title": "Automated issue for commit: ${{ github.sha }}",
+            "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
+            }'
+      - name: send comment
+        if: github.event_name == 'pull_request'
+        env:
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          curl \
+            -X POST \
+            https://api.github.com/repos/jmleefree/actiontest1/pull/2/reviews \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            --data '{ "body": "comment2 ... ( https://github.com/'"$GITHUB_REPOSITORY"'/actions/runs/'"$GITHUB_RUN_ID"')" }'
