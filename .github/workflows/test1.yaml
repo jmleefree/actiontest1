@@ -30,10 +30,8 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: env display2
+      - name: env display 8888
         env:
-          SUPER_SECRET: ${{ secrets.SUPERSECRET }}
-          TEMP: ${{ toJSON(secrets) }}
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo "hello world"
