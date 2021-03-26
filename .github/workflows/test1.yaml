@@ -30,13 +30,6 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: create review comment
-        uses: andrewmusgrave/automatic-pull-request-review@0.0.2
-        with:
-          repo-token: "${{ secrets.TOKEN }}"
-          event: COMMENT
-          body: "comment ..."
-
       - name: send comment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
