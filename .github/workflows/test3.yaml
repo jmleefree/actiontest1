@@ -35,7 +35,7 @@ jobs:
       #     pwd
       #     ls
 
-      - name: Checkout PR
+      - name: Checkout PR2
         uses: dawidd6/action-checkout-pr@v1
         with:
           pr: ${{ steps.findPr.outputs.pr }}
