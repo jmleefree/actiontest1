@@ -15,11 +15,7 @@ jobs:
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          dvc plots show --show-vega prc.json > vega.json
-          vl2svg vega.json prc.svg
-
           echo "## Metrics report" > report.md
-          cml-publish prc.svg --md >> report.md
           cml-send-comment report.md
   build:
     name: Build
