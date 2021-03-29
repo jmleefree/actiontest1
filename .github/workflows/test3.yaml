@@ -32,7 +32,7 @@ jobs:
           ls
 
       - name: Checkout PR
-        if: github.event_name == 'pull_request_target'
+        if: ${{ github.event_name == 'pull_request_target' }}
         uses: dawidd6/action-checkout-pr@v1
         with:
           pr: ${{ github.event.number }}
@@ -54,7 +54,7 @@ jobs:
           allow-repeats: false # This is the default
 
       - name: Generate report
-        container: docker://dvcorg/cml-py3:latest
+        uses: docker://dvcorg/cml-py3:latest
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
