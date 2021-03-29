@@ -26,6 +26,11 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Check Folder
+        run: |
+          pwd
+          ls
+
       - name: Lint
         run: |
           go get -u golang.org/x/lint/golint
