@@ -26,7 +26,17 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Check Folder
+      - name: Check Folder1
+        run: |
+          pwd
+          ls
+
+      - name: Checkout PR
+        uses: dawidd6/action-checkout-pr@v1
+        with:
+          pr: ${{ github.event.number }}
+
+      - name: Check Folder2
         run: |
           pwd
           ls
