@@ -53,6 +53,14 @@ jobs:
           repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
 
+      - name: Generate report
+        container: docker://dvcorg/cml-py3:latest
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Hello world!" > report.md
+          cml-send-comment report.md
+
       - name: Lint
         run: |
           go get -u golang.org/x/lint/golint
