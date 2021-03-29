@@ -76,24 +76,14 @@ jobs:
           go get -u golang.org/x/lint/golint
           golint ./...
 
-      - name: golangci-lint
-        uses: reviewdog/action-golangci-lint@v1
+      - uses: reviewdog/action-setup@v1
         with:
-          golangci_lint_flags: "--config=.github/.golangci.yml ./..."
-
-      - name: golint
-        uses: reviewdog/action-golangci-lint@v1
-        with:
-          golangci_lint_flags: "--disable-all -E golint"
-          tool_name: golint # Change reporter name.
-          level: warning # GitHub Status Check won't become failure with this level.
-
-      - name: errcheck
-        uses: reviewdog/action-golangci-lint@v1
-        with:
-          golangci_lint_flags: "--disable-all -E errcheck"
-          tool_name: errcheck
-          level: info
+          reviewdog_version: latest # Optional. [latest,nightly,v.X.Y.Z]
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog -reporter=github-pr-check -runners=golint,govet
 
       - name: Build
         run: go build -v ./...
