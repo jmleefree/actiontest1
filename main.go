@@ -10,7 +10,7 @@ func Multiply(x int, y int) int {
 	return x * y
 }
 
-func Sub(x int, y int) int {
+func Sub2(x int, y int) int {
 	return x - y
 }
 
