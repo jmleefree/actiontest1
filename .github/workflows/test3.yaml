@@ -71,18 +71,6 @@ jobs:
       #    repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
       #    allow-repeats: false # This is the default
 
-      - name: Create code coverage status for the current commit
-        run: |
-          curl "https://{GIT_USER}:${GIT_TOKEN}@api.github.com/repos/${ORG_NAME}/${PROJECT_NAME}/statuses/${COMMIT_SHA}" -d "{\"state\": \"pending\",\"target_url\": \"https://github.com/${ORG_NAME}/${PROJECT_NAME}/pull/${PULL_NUMBER}/checks?check_run_id=${RUN_ID}\",\"description\": \"in progress — This check has started... \",\"context\": \"code cov\"}"
-        env:
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-          GIT_USER: ${{ secrets.GIT_USER }}
-          ORG_NAME: ${{ secrets.ORG_NAME }}
-          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-          RUN_ID: ${{ github.run_id }}
-          PULL_NUMBER: ${{ github.event.pull_request.number }}
-
       - name: Lint
         run: |
           go get -u golang.org/x/lint/golint
@@ -113,13 +101,19 @@ jobs:
           files: unit-tests.xml
 
       - name: Calc coverage
-        run: go test -v -covermode=count -coverprofile=coverage.out
-      - name: Convert coverage to lcov
-        uses: jandelgado/gcov2lcov-action@v1.0.5
-      - name: Check Folder3
-        run: |
-          pwd
-          ls
+        run: go test -v -coverprofile=profile.cov ./...
+      - name: Send coverage
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
+      #- name: Calc coverage
+      #  run: go test -v -covermode=count -coverprofile=coverage.out
+      #- name: Convert coverage to lcov
+      #  uses: jandelgado/gcov2lcov-action@v1.0.5
+      #- name: Check Folder3
+      #  run: |
+      #    pwd
+      #    ls
       #- name: Coveralls (error)
       #  uses: coverallsapp/github-action@master
       #  with:
