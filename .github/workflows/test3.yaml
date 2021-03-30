@@ -71,13 +71,6 @@ jobs:
           repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
 
-      - name: Annotate
-        uses: yuzutech/annotations-action@v0.3.0
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "lint"
-          input: "./annotations.json"
-
       - name: Lint
         run: |
           go get -u golang.org/x/lint/golint
