@@ -72,7 +72,7 @@ jobs:
           allow-repeats: false # This is the default
 
       - name: Annotate
-        uses: Attest/annotations-action@v0.1.0
+        uses: Attest/annotations-action@v1.0.7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           input: "./annotations.json"
