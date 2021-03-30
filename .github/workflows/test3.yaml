@@ -114,7 +114,7 @@ jobs:
       #     github-token: ${{ secrets.GITHUB_TOKEN }}
       #     path-to-lcov: coverage.lcov
       - name: LCov Reporter
-        uses: romeovs/lcov-reporter-action@v0.2.21
+        uses: romeovs/lcov-reporter-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
