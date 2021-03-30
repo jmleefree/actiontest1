@@ -72,11 +72,11 @@ jobs:
           allow-repeats: false # This is the default
 
       - name: Annotate
-        uses: Attest/annotations-action@v1.0.7
+        uses: yuzutech/annotations-action@v0.3.0
         with:
-          secret: ${{ secrets.GITHUB_TOKEN }}
-          path: "./annotations.json"
-          title: "Annotate Files"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "lint"
+          input: "./annotations.json"
 
       - name: Lint
         run: |
