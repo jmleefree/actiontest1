@@ -108,16 +108,16 @@ jobs:
         run: |
           pwd
           ls
-      # - name: Coveralls
-      #   uses: coverallsapp/github-action@v1.1.2
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     path-to-lcov: coverage.lcov
-      - name: LCov Reporter
-        uses: romeovs/lcov-reporter-action@v0.2.17
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: coverage.lcov
+      - name: Coveralls
+          uses: coverallsapp/github-action@master
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            path-to-lcov: ./coverage.lcov
+      #- name: LCov Reporter
+      #  uses: romeovs/lcov-reporter-action@v0.2.17
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      #    lcov-file: coverage.lcov
 
       #- name: Check Action(push only)
       #  uses: LouisBrunner/checks-action@v1.1.1
