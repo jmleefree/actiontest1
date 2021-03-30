@@ -113,13 +113,19 @@ jobs:
           files: unit-tests.xml
 
       - name: Calc coverage
-        run: go test -v -covermode=count -coverprofile=coverage.out
-      - name: Convert coverage to lcov
-        uses: jandelgado/gcov2lcov-action@v1.0.5
-      - name: Check Folder3
-        run: |
-          pwd
-          ls
+        run: go test -v -coverprofile=profile.cov ./...
+      - name: Send coverage
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: profile.cov
+      #- name: Calc coverage
+      #  run: go test -v -covermode=count -coverprofile=coverage.out
+      #- name: Convert coverage to lcov
+      #  uses: jandelgado/gcov2lcov-action@v1.0.5
+      #- name: Check Folder3
+      #  run: |
+      #    pwd
+      #    ls
       #- name: Coveralls (error)
       #  uses: coverallsapp/github-action@master
       #  with:
