@@ -104,11 +104,15 @@ jobs:
         run: go test -v -covermode=count -coverprofile=coverage.out
       - name: Convert coverage to lcov
         uses: jandelgado/gcov2lcov-action@v1.0.5
-      - name: Coveralls
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coverage.lcov
+      - name: Check Folder3
+        run: |
+          pwd
+          ls
+      # - name: Coveralls
+      #   uses: coverallsapp/github-action@v1.1.2
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     path-to-lcov: coverage.lcov
       - name: LCov Reporter
         uses: romeovs/lcov-reporter-action@v0.2.21
         with:
