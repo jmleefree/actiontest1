@@ -71,6 +71,13 @@ jobs:
           repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
 
+      - name: Annotate
+        uses: Attest/annotations-action@v0.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          input: "./annotations.json"
+          title: "Annotate Files"
+
       - name: Lint
         run: |
           go get -u golang.org/x/lint/golint
@@ -83,7 +90,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          reviewdog -conf=./.github/.reviewdog.yml -reporter=github-pr-check
+          reviewdog -conf=./.github/.reviewdog.yml -reporter=github-pr-check -runners=golint,govet
 
       - name: Build
         run: go build -v ./...
