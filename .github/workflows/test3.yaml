@@ -100,6 +100,16 @@ jobs:
         with:
           files: unit-tests.xml
 
+      - name: Calc coverage
+        run: go test -v -covermode=count -coverprofile=coverage.out
+      - name: Convert coverage to lcov
+        uses: jandelgado/gcov2lcov-action@v1.0.5
+      - name: Coveralls
+        uses: coverallsapp/github-action@v1.0.4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
+
       - name: Check Action
         uses: LouisBrunner/checks-action@v1.1.1
         if: always()
