@@ -12,6 +12,15 @@ jobs:
       matrix:
         go: ["1.13"]
     steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo "workflow starting..."
+          pwd
+          ls
+
       - uses: actions/checkout@v2
 
       - name: Setup Go

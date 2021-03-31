@@ -8,9 +8,19 @@ on:
 
 jobs:
   cb-ci-report:
+    name: CB-CI-REPORT
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo "workflow starting..."
+          pwd
+          ls
+
       - name: Download Result
         uses: actions/download-artifact@v2
         with:
