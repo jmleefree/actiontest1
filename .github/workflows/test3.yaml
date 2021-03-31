@@ -41,21 +41,31 @@ jobs:
           pwd
           ls
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+      #- name: Check out code into the Go module directory
+      #  uses: actions/checkout@v2
 
-      - name: Check Folder1
-        run: |
-          pwd
-          ls
+      #- name: Check Folder1
+      #  run: |
+      #    pwd
+      #    ls
+
+      #- name: Checkout PR
+      #  if: ${{ github.event_name == 'pull_request_target' }}
+      #  uses: dawidd6/action-checkout-pr@v1
+      #  with:
+      #    pr: ${{ github.event.number }}
+
+      #- name: Check Folder2
+      #  run: |
+      #    pwd
+      #    ls
 
       - name: Checkout PR
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: dawidd6/action-checkout-pr@v1
+        uses: actions/checkout@v2
         with:
-          pr: ${{ github.event.number }}
+          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Check Folder2
+      - name: Check Folder3
         run: |
           pwd
           ls
@@ -126,7 +136,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
 
-      - name: Prepare Check Runs
+      - name: Prepare Check Runs(push only)
         uses: dflydev/check-runs-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
