@@ -1,0 +1,22 @@
+name: CB-CI-ACTIONS
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  cb-ci-test:
+    name: CB-CI-TEST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Test
+        run: |
+          go get gotest.tools/gotestsum
+          gotestsum --junitfile unit-tests.xml
+
+      - name: Upload Test Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: unit-tests.xml
