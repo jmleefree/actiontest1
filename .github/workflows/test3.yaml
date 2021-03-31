@@ -156,6 +156,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.pull_request.head.sha }}
           name: Test XYZ
           conclusion: ${{ job.status }}
           output: |
