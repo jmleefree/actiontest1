@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - uses: haya14busa/action-workflow_run-status@v1
+
       - name: Check Environment variable
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
@@ -37,6 +39,17 @@ jobs:
         with:
           commit: ${{ github.event.pull_request.head.sha }}
           files: unit-tests.xml
+
+      - name: PR Comment
+        uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            **Hello**
+            ??
+            !
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
+          allow-repeats: false # This is the default
 
       - name: Check Action
         uses: LouisBrunner/checks-action@v1.1.1
