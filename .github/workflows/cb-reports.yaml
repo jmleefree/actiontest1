@@ -41,15 +41,18 @@ jobs:
           files: unit-tests.xml
 
       - name: PR Comment
-        uses: mshick/add-pr-comment@v1
+        uses: actions/github-script@v3
         with:
-          message: |
-            **Hello**
-            ??
-            !
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: "github-actions[bot]" # The user.login for temporary GitHub tokens
-          allow-repeats: false # This is the default
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            var issue_number = Number(fs.readFileSync('./pr_number.txt'));
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'Everything is OK. Thank you for the PR!'
+            });
 
       - name: Check Action
         uses: LouisBrunner/checks-action@v1.1.1
