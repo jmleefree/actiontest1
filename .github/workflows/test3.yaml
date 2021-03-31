@@ -3,7 +3,7 @@ name: Go
 on:
   push:
     branches: [main]
-  pull_request_target:
+  pull_request:
     branches: [main]
 
 jobs:
@@ -120,21 +120,21 @@ jobs:
       #  with:
       #    github-token: ${{ secrets.GITHUB_TOKEN }}
       #    path-to-lcov: ./coverage.lcov
-      - name: LCov Reporter
+      - name: LCov Reporter(push/pull_request only, commit comment output)
         uses: romeovs/lcov-reporter-action@v0.2.21
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
 
-      #- name: Check Action(push only)
-      #  uses: LouisBrunner/checks-action@v1.1.1
-      #  if: always()
-      #  with:
-      #    token: ${{ secrets.GITHUB_TOKEN }}
-      #    name: Test XYZ
-      #    conclusion: ${{ job.status }}
-      #    output: |
-      #      {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
+      - name: Check Action(push only)
+        uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
 
       #- name: Create commit comment
       #  uses: peter-evans/commit-comment@v1
