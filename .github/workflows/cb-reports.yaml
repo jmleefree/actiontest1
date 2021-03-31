@@ -21,10 +21,11 @@ jobs:
           pwd
           ls
 
-      - name: Download Result
-        uses: actions/download-artifact@v2
+      - name: Check Action
+        uses: LouisBrunner/checks-action@v1.1.1
         with:
-          name: my-artifact
-
-      - name: Display structure of downloaded files
-        run: ls -R
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
