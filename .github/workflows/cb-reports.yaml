@@ -35,6 +35,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
+          commit: ${{ github.event.pull_request.head.sha }}
           files: unit-tests.xml
 
       - name: Check Action
