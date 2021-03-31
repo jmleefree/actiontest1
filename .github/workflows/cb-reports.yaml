@@ -8,9 +8,9 @@ on:
 
 jobs:
   cb-ci-report:
-    #name: CB-CI-REPORT
+    name: CB-CI-REPORT
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: haya14busa/action-workflow_run-status@v1
 
