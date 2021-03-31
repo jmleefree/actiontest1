@@ -28,13 +28,18 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
+      - name: Save PR number
+        run: |
+          mkdir -p ./outputs
+          echo ${{ github.event.number }} > ./outputs/pr_number.txt
+
       - name: Run Test
         run: |
           go get gotest.tools/gotestsum
-          gotestsum --junitfile unit-tests.xml
+          gotestsum --junitfile ./outputs/unit-tests.xml
 
       - name: Upload Test Result
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
-          path: unit-tests.xml
+          name: cb-artifact
+          path: outputs/
