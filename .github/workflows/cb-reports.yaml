@@ -37,7 +37,7 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          commit: ${{ github.event.pull_request.head.sha }}
+          commit: ${{ github.event.workflow_run.head_commit.id }}
           files: unit-tests.xml
 
       - name: PR Comment
@@ -55,7 +55,7 @@ jobs:
         uses: LouisBrunner/checks-action@v1.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          sha: ${{ github.event.pull_request.head.sha }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
           name: Test XYZ
           conclusion: ${{ job.status }}
           output: |
