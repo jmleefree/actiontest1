@@ -3,7 +3,7 @@ name: Go
 on:
   push:
     branches: [main]
-  pull_request:
+  pull_request_target:
     branches: [main]
 
 jobs:
@@ -125,6 +125,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: coverage.lcov
+
+      - name: Prepare Check Runs
+        uses: dflydev/check-runs-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checks: |
+            [
+              { "id": "phpunit", "name": "PHPUnit" },
+              { "id": "psalm", "name": "Psalm" },
+              { "id": "phpcs", "name": "PHP_CodeSniffer" },
+              { "id": "eslint", "name": "ESLint" },
+              { "id": "assets", "name": "npm run production" },
+              { "id": "dusk", "name": "Dusk" }
+            ]
+          status: "queued"
 
       - name: Check Action(push only)
         uses: LouisBrunner/checks-action@v1.1.1
