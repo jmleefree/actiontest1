@@ -47,6 +47,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            console.log(context)
             const { SHA } = process.env
             const result = await github.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
