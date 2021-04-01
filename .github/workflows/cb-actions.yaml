@@ -34,27 +34,37 @@ jobs:
           echo ${{ github.event.number }} > ./outputs/pr_number.txt
           echo "Test1 PR is ${{ github.event.number }}"
 
-      - uses: jwalton/gh-find-current-pr@v1
-        id: findPr
-      - run: echo "Test2 PR is ${PR}"
-        env:
-          PR: ${{ steps.findPr.outputs.pr }}
-
       - name: PR Number
+        id: findPr
         uses: actions/github-script@v3
-        env:
-          SHA: ${{ github.sha }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log(context)
-            const { SHA } = process.env
-            const result = await github.repos.listPullRequestsAssociatedWithCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: SHA
-            })
-            console.log(result)
+            console.log("eventName", context.eventName)
+            if(context.eventName == 'pull_request') {
+              console.log("number1", context.payload.number)
+              core.setOutput('pr', context.payload.number)
+            }
+            else if(context.eventName == 'push') {
+              const result = await github.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha
+              })
+              console.log(result)
+
+              const pr = result.data.length > 0 && result.data[0];
+              core.setOutput('pr', pr && pr.number || '');     
+              console.log("number2", pr.number)         
+            }
+            else {
+              core.setOutput('pr', '')
+            }
+
+      - run: echo "Test2 PR is ${PR}"
+        env:
+          PR: ${{ steps.findPr.outputs.pr }}
 
       - name: Run Test
         run: |
