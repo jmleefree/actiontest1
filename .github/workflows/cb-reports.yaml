@@ -1,14 +1,14 @@
-name: CB-CI-REPORTS
+name: CB-CI-REPORTS-WORKFLOW
 
 on:
   workflow_run:
-    workflows: ["CB-CI-ACTIONS"]
+    workflows: ["CB-CI-ACTIONS-WORKFLOW"]
     types:
       - completed
 
 jobs:
-  cb-ci-report:
-    name: CB-CI-REPORT
+  cb-ci-reports-job:
+    name: CB-CI-REPORTS-JOB
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
@@ -39,7 +39,6 @@ jobs:
           files: unit-tests.xml
 
       - name: PR Comment
-        if: ${{ github.event.workflow_run.event == 'pull_request' }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -50,7 +49,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
+              body: 'Everything is OK. Thank you for the PR!' + context.eventName
             });
 
       - name: Check Action

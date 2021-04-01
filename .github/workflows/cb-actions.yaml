@@ -1,12 +1,12 @@
-name: CB-CI-ACTIONS
+name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
   pull_request:
 
 jobs:
-  cb-ci-test:
-    name: CB-CI-TEST
+  cb-ci-actions-job:
+    name: CB-CI-ACTIONS-JOB
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,43 +28,32 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Save PR number
-        run: |
-          mkdir -p ./outputs
-          echo ${{ github.event.number }} > ./outputs/pr_number.txt
-          echo "Test1 PR is ${{ github.event.number }}"
-
-      - name: PR Number
-        id: findPr
+      - name: Find PR Number
+        id: findPrNumber
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(context)
-            console.log("eventName", context.eventName)
             if(context.eventName == 'pull_request') {
-              console.log("number1", context.payload.number)
               core.setOutput('pr', context.payload.number)
-            }
-            else if(context.eventName == 'push') {
+            } else if(context.eventName == 'push') {
               const result = await github.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 commit_sha: context.sha
               })
-              console.log(result)
-
               const pr = result.data.length > 0 && result.data[0];
               core.setOutput('pr', pr && pr.number || '');     
-              console.log("number2", pr.number)         
-            }
-            else {
+            } else {
               core.setOutput('pr', '')
             }
 
-      - run: echo "Test2 PR is ${PR}"
+      - name: Save PR number
         env:
-          PR: ${{ steps.findPr.outputs.pr }}
+          PR: ${{ steps.findPrNumber.outputs.pr }}
+        run: |
+          mkdir -p ./outputs
+          echo ${PR} > ./outputs/pr_number.txt
 
       - name: Run Test
         run: |
