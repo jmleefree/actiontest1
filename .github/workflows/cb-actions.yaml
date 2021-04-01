@@ -43,8 +43,8 @@ jobs:
             console.log(context)
             console.log("eventName", context.eventName)
             if(context.eventName == 'pull_request') {
-              console.log("number1", context.number)
-              core.setOutput('pr', context.number)
+              console.log("number1", context.payload.number)
+              core.setOutput('pr', context.payload.number)
             }
             else if(context.eventName == 'push') {
               const result = await github.repos.listPullRequestsAssociatedWithCommit({
