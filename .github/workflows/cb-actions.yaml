@@ -65,9 +65,6 @@ jobs:
       - name: Run Lint
         run: |
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-
-      - name: Publish Lint
-        run: |
           cat ./outputs/lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
 
       - name: Run Test
