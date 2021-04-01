@@ -61,7 +61,9 @@ jobs:
         env:
           PR: ${{ steps.findPrNumber.outputs.pr }}
         run: |
+          ls -al
           echo ${PR} > ./outputs/pr_number.txt
+          ls -al ./outputs
 
       - name: Run Lint
         run: |
