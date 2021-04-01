@@ -28,6 +28,11 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
+      - name: Setup golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
+          golangci-lint --version
+
       - name: Find PR Number
         id: findPrNumber
         uses: actions/github-script@v3
@@ -54,6 +59,10 @@ jobs:
         run: |
           mkdir -p ./outputs
           echo ${PR} > ./outputs/pr_number.txt
+
+      - name: Run Lint
+        run: |
+          golangci-lint run --config ./.github/.golangci.yaml > lint-result.xml
 
       - name: Run Test
         run: |
