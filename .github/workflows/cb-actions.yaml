@@ -16,17 +16,12 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
           SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo "workflow starting..."
-          pwd
-          ls
 
       - uses: actions/checkout@v2
 
       - name: Make Output Folder
         run: |
           mkdir -p ./outputs
-          ls -al
 
       - name: Setup Go
         uses: actions/setup-go@v2
@@ -62,13 +57,12 @@ jobs:
         env:
           PR: ${{ steps.findPrNumber.outputs.pr }}
         run: |
-          ls -al
           echo ${PR} > ./outputs/pr_number.txt
-          ls -al ./outputs
 
       - name: Run Lint
         run: |
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
+          cat ./outputs/lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
 
       - name: Run Test
         run: |
