@@ -21,11 +21,12 @@ jobs:
           pwd
           ls
 
+      - uses: actions/checkout@v2
+
       - name: Make Output Folder
         run: |
           mkdir -p ./outputs
-
-      - uses: actions/checkout@v2
+          ls -al
 
       - name: Setup Go
         uses: actions/setup-go@v2
