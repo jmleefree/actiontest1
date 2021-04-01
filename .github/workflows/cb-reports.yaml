@@ -36,6 +36,10 @@ jobs:
           commit: ${{ github.event.workflow_run.head_commit.id }}
           files: unit-tests.xml
 
+      - name: Checkout PR
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_commit.id }}
       - uses: reviewdog/action-setup@v1
         with:
           reviewdog_version: latest
