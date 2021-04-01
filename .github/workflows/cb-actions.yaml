@@ -16,6 +16,8 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
           SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo 'workflow starting'
 
       - uses: actions/checkout@v2
 
