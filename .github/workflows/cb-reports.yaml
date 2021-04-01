@@ -48,9 +48,8 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CI_PULL_REQUEST=$(cat ./pr_number.txt)
-          echo 'test ${CI_PULL_REQUEST}'
-          env CI_PULL_REQUEST
+          CI_PULL_REQUEST=130
+          env | grep CI_PULL_REQUEST
           cat ./lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
 
       - name: PR Comment
