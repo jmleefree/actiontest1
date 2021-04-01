@@ -35,10 +35,11 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          commit: ${{ github.event.workflow_run.head_commit.id }}
+          # commit: ${{ github.event.workflow_run.head_commit.id }}
           files: unit-tests.xml
 
       - name: PR Comment
+        if: ${{ github.event.workflow_run.event == 'pull_request' }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +64,7 @@ jobs:
             {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
 
       - name: Create Commit Comment
+        if: ${{ github.event.workflow_run.event == 'push' }}
         uses: peter-evans/commit-comment@v1
         with:
           body: |

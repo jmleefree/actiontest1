@@ -60,7 +60,7 @@ jobs:
           go get gotest.tools/gotestsum
           gotestsum --junitfile ./outputs/unit-tests.xml
 
-      - name: Upload Test Result
+      - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
           name: cb-artifact
