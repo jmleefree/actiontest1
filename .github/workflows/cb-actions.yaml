@@ -62,6 +62,8 @@ jobs:
 
       - name: Run Lint
         run: |
+          ls
+          golangci-lint run --config ./.github/.golangci.yaml
           golangci-lint run --config ./.github/.golangci.yaml > lint-result.xml
 
       - name: Run Test
