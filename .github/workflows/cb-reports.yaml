@@ -39,7 +39,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_commit.id }}
-          files: unit-tests.xml
+          files: lint-result.xml
 
       - uses: reviewdog/action-setup@v1
         with:
