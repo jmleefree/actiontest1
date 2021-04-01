@@ -36,6 +36,8 @@ jobs:
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
       - run: echo "Test2 PR is ${PR}"
         env:
           PR: ${{ steps.findPr.outputs.pr }}
