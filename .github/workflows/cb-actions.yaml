@@ -40,18 +40,19 @@ jobs:
         env:
           PR: ${{ steps.findPr.outputs.pr }}
 
-     - name: PR Number
+      - name: PR Number
         uses: actions/github-script@v3
         env:
           SHA: ${{ github.sha }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const { SHA } = process.env
             const result = await github.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              commit_sha: ${SHA}
-            });          
+              commit_sha: SHA
+            })
             console.log(result)
 
       - name: Run Test
