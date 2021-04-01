@@ -59,6 +59,9 @@ jobs:
         run: |
           echo ${PR} > ./outputs/pr_number.txt
 
+      - uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
       - name: Run Lint
         run: |
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
