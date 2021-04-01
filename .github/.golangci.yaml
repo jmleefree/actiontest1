@@ -1,5 +1,5 @@
 output:
-  format: checkstyle
+  format: github-actions
 
 linters-settings:
   depguard:
