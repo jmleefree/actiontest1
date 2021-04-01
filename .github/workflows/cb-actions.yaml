@@ -2,74 +2,23 @@ name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
-  cb-ci-actions-job:
-    name: CB-CI-ACTIONS-JOB
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: ["1.13"]
     steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-
       - uses: actions/checkout@v2
 
-      - name: Make Output Folder
-        run: |
-          mkdir -p ./outputs
-
-      - name: Setup Go
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go }}
+          go-version: 1.15
 
-      - name: Setup golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
-          golangci-lint --version
+      - name: Build
+        run: go build -v ./...
 
-      - name: Find PR Number
-        id: findPrNumber
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            if(context.eventName == 'pull_request') {
-              core.setOutput('pr', context.payload.number)
-            } else if(context.eventName == 'push') {
-              const result = await github.repos.listPullRequestsAssociatedWithCommit({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha
-              })
-              const pr = result.data.length > 0 && result.data[0];
-              core.setOutput('pr', pr && pr.number || '');     
-            } else {
-              core.setOutput('pr', '')
-            }
-
-      - name: Save PR number
-        env:
-          PR: ${{ steps.findPrNumber.outputs.pr }}
-        run: |
-          echo ${PR} > ./outputs/pr_number.txt
-
-      - name: Run Lint
-        run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-
-      - name: Run Test
-        run: |
-          go get gotest.tools/gotestsum
-          gotestsum --junitfile ./outputs/unit-tests.xml
-
-      - name: Upload Result
-        uses: actions/upload-artifact@v2
-        with:
-          name: cb-artifact
-          path: outputs/
+      - name: Test
+        run: go test -v ./...
