@@ -36,11 +36,23 @@ jobs:
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
       - run: echo "Test2 PR is ${PR}"
         env:
           PR: ${{ steps.findPr.outputs.pr }}
+
+     - name: PR Number
+        uses: actions/github-script@v3
+        env:
+          SHA: ${{ github.sha }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const result = await github.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: ${SHA}
+            });          
+            console.log(result)
 
       - name: Run Test
         run: |
