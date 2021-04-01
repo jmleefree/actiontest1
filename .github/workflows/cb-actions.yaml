@@ -7,8 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  cb-ci-actions-job:
+    name: CB-CI-ACTIONS-JOB
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.13"]
     steps:
       - uses: actions/checkout@v2
 
