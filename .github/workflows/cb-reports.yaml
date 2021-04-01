@@ -63,3 +63,13 @@ jobs:
           conclusion: ${{ job.status }}
           output: |
             {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
+
+      - name: Create Commit Comment
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [commit-comment][1]
+
+            [1]: https://github.com/peter-evans/commit-comment
