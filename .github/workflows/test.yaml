@@ -2,7 +2,9 @@ name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   cb-ci-actions-job:
