@@ -21,6 +21,10 @@ jobs:
           pwd
           ls
 
+      - name: Make Output Folder
+        run: |
+          mkdir -p ./outputs
+
       - uses: actions/checkout@v2
 
       - name: Setup Go
@@ -57,12 +61,11 @@ jobs:
         env:
           PR: ${{ steps.findPrNumber.outputs.pr }}
         run: |
-          mkdir -p ./outputs
           echo ${PR} > ./outputs/pr_number.txt
 
       - name: Run Lint
         run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
 
       - name: Run Test
         run: |
