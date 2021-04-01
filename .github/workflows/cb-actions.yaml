@@ -37,7 +37,6 @@ jobs:
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
       - run: echo "Test2 PR is ${PR}"
-        if: success() && steps.findPr.outputs.number
         env:
           PR: ${{ steps.findPr.outputs.pr }}
 
