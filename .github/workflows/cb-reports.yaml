@@ -1,0 +1,83 @@
+name: CB-CI-REPORTS-WORKFLOW
+
+on:
+  workflow_run:
+    workflows: ["CB-CI-ACTIONS-WORKFLOW"]
+    types:
+      - completed
+
+jobs:
+  cb-ci-reports-job:
+    name: CB-CI-REPORTS-JOB
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo "workflow starting..."
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cb-actions.yaml
+          workflow_conclusion: success
+          name: cb-artifact
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_commit.id }}
+          files: unit-tests.xml
+
+      - uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+      - name: Publish Lint Results
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_COMMIT: ${{ github.event.workflow_run.head_commit.id }}
+        run: |
+          cat lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
+
+      - name: PR Comment
+        if: ${{ github.event.workflow_run.event == 'pull_request' }}
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            var issue_number = Number(fs.readFileSync('./pr_number.txt'));
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'Everything is OK. Thank you for the PR!' + context.eventName
+            });
+
+      - name: Check Action
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
+
+      - name: Create Commit Comment
+        if: ${{ github.event.workflow_run.event == 'push' }}
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [commit-comment][1]
+
+            [1]: https://github.com/peter-evans/commit-comment
