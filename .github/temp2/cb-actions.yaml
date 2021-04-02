@@ -61,10 +61,6 @@ jobs:
         run: |
           echo ${PR} > ./outputs/pr_number.txt
 
-      - name: Run Lint
-        run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-
       - name: Run Test
         run: |
           go get gotest.tools/gotestsum
