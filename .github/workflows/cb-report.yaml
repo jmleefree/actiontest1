@@ -2,7 +2,7 @@ name: CB-CI-REPORTS-WORKFLOW
 
 on:
   workflow_run:
-    workflows: ["CB-CI-ACTIONS-WORKFLOW", "CB-CI-ACTIONS-TRAGET-WORKFLOW"]
+    workflows: ["CB-CI-ACTIONS-WORKFLOW"]
     types:
       - completed
 
@@ -10,7 +10,7 @@ jobs:
   cb-ci-reports-job:
     name: CB-CI-REPORTS-JOB
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow.name == 'CB-CI-ACTIONS-WORKFLOW' && github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check Environment variable
         env:
@@ -51,17 +51,6 @@ jobs:
           commit: ${{ github.event.workflow_run.head_commit.id }}
           files: unit-tests.xml
 
-      - uses: reviewdog/action-setup@v1
-        with:
-          reviewdog_version: latest
-      - name: Publish Lint Results
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CI_COMMIT: ${{ github.event.workflow_run.head_commit.id }}
-        run: |
-          export CI_COMMIT=${{ github.event.workflow_run.head_commit.id }}
-          cat ./lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
-
       - name: Upload coverage report
         uses: codecov/codecov-action@v1.3.1
         with:
@@ -70,6 +59,16 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           override_commit: ${{ github.event.workflow_run.head_commit.id }}
+
+      - name: Publish Coverage Results
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":"codecov","text_description":"[![codecov](https://codecov.io/gh/jmleefree/actiontest1/branch/main/graph/badge.svg?token=B7NLYKAZF9)](https://codecov.io/gh/jmleefree/actiontest1)"}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
@@ -86,16 +85,6 @@ jobs:
               body: 'Everything is OK. Thank you for the PR!' + context.eventName
             });
 
-      - name: Check Action
-        uses: LouisBrunner/checks-action@v1.1.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          sha: ${{ github.event.workflow_run.head_commit.id }}
-          name: Test XYZ
-          conclusion: ${{ job.status }}
-          output: |
-            {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
-
       - name: Create Commit Comment
         if: ${{ github.event.workflow_run.event == 'push' }}
         uses: peter-evans/commit-comment@v1
@@ -106,26 +95,3 @@ jobs:
             - Created by [commit-comment][1]
 
             [1]: https://github.com/peter-evans/commit-comment
-
-  cb-ci-reports-target-job:
-    name: CB-CI-REPORTS-TARGET-JOB
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow.name == 'CB-CI-ACTIONS-TRAGET-WORKFLOW' && github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo "workflow starting..."
-
-      - name: Download cb-actions-target-artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: cb-actions-target.yaml
-          workflow_conclusion: success
-          name: cb-actions-target-artifact
-
-      - name: Display structure of downloaded files
-        run: ls -R
