@@ -56,18 +56,6 @@ jobs:
         run: |
           cat ./outputs/lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
 
-      - name: Run Coverage
-        run: |
-          go test -v -covermode=count -coverprofile=./outputs/coverage.txt
-
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v1.0.2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./outputs/coverage.txt
-          flags: unittests
-          name: codecov-umbrella
-
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
