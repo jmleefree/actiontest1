@@ -36,6 +36,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            var fs = require('fs');
             var pr_number = Number(fs.readFileSync('./pr_number.txt'));
             core.setOutput('pr', pr_number)
 
@@ -53,6 +54,7 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           override_pr: ${{ steps.loadPrNumber.outputs.pr }}
+          verbose: true
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}

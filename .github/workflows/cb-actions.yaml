@@ -69,6 +69,7 @@ jobs:
       - name: Run Coverage
         run: |
           go test -v -covermode=count -coverprofile=./outputs/coverage.txt
+          cat ./outputs/coverage.txt
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
