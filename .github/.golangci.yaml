@@ -1,5 +1,5 @@
 output:
-  format: junit-xml
+  format: checkstyle
 
 linters-settings:
   depguard:

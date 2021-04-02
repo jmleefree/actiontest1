@@ -1,0 +1,75 @@
+name: CB-CI-REPORTS-WORKFLOW
+
+on:
+  workflow_run:
+    workflows: ["CB-CI-ACTIONS-WORKFLOW", "CB-CI-ACTIONS-TRAGET-WORKFLOW"]
+    types:
+      - completed
+
+jobs:
+  cb-ci-reports-job:
+    name: CB-CI-REPORTS-JOB
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo "workflow starting..."
+
+      - name: Download cb-actions-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cb-actions.yaml
+          workflow_conclusion: success
+          name: cb-actions-artifact
+
+      - name: Download cb-actions-target-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cb-actions-target.yaml
+          workflow_conclusion: success
+          name: cb-actions-target-artifact
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: PR Comment
+        if: ${{ github.event.workflow_run.event == 'pull_request' }}
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            var issue_number = Number(fs.readFileSync('./pr_number.txt'));
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'Everything is OK. Thank you for the PR!' + context.eventName
+            });
+
+      - name: Check Action
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+          output: |
+            {"summary":"Test was a success","text_description":"This is a text description of the annotations and images\nWith more stuff\nAnd more"}
+
+      - name: Create Commit Comment
+        if: ${{ github.event.workflow_run.event == 'push' }}
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [commit-comment][1]
+
+            [1]: https://github.com/peter-evans/commit-comment
