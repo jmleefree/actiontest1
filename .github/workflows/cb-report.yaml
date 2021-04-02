@@ -65,10 +65,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
-          name: Test XYZ
+          name: Test Coverage Results
           conclusion: ${{ job.status }}
           output: |
-            {"summary":"codecov","text_description":"[![codecov](https://codecov.io/gh/jmleefree/actiontest1/branch/main/graph/badge.svg?token=B7NLYKAZF9)](https://codecov.io/gh/jmleefree/actiontest1)"}
+            {"summary":"codecov ${{ steps.loadPrNumber.outputs.pr }} ","text_description":"[![codecov](https://codecov.io/gh/jmleefree/actiontest1/branch/main/graph/badge.svg?token=B7NLYKAZF9)](https://codecov.io/gh/jmleefree/actiontest1)"}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
