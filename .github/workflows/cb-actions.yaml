@@ -2,13 +2,11 @@ name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
-  pull_request_target:
   pull_request:
 
 jobs:
   cb-ci-actions-job:
     name: CB-CI-ACTIONS-JOB
-    #if: ${{ github.event_name != 'pull_request_target' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,51 +35,34 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
           golangci-lint --version
 
-      - name: Run Lint
-        run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
+      - name: Find PR Number
+        id: findPrNumber
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            if(context.eventName == 'pull_request') {
+              core.setOutput('pr', context.payload.number)
+            } else if(context.eventName == 'push') {
+              const result = await github.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha
+              })
+              const pr = result.data.length > 0 && result.data[0];
+              core.setOutput('pr', pr && pr.number || '');     
+            } else {
+              core.setOutput('pr', '')
+            }
 
-      - name: Run Test
+      - name: Save PR number
+        env:
+          PR: ${{ steps.findPrNumber.outputs.pr }}
         run: |
-          go get gotest.tools/gotestsum
-          gotestsum --junitfile ./outputs/unit-tests.xml
+          echo ${PR} > ./outputs/pr_number.txt
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
-          name: cb-artifact
+          name: cb-actions-artifact
           path: outputs/
-
-  cb-ci-reports-job:
-    name: CB-CI-REPORTS-JOB
-    #if: ${{ github.event_name != 'pull_request' }}
-    needs: cb-ci-actions-job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo "workflow starting..."
-
-      - name: Checkout PR
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Checkout Master
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/checkout@v2
-
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: ./cb-artifact/unit-tests.xml
