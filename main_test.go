@@ -9,8 +9,8 @@ func TestSum(t *testing.T) {
 	}
 }
 
-func TestSum2(t *testing.T) {
-	total := Sum(5, 5)
+func TestMultiply2(t *testing.T) {
+	total := Multiply(5, 5)
 	if total != 10 {
 		t.Errorf("Sum2 was incorrect, got: %d, want: %d.", total, 10)
 	}
