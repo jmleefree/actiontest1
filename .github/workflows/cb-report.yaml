@@ -30,6 +30,15 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
+      - name: Load PR Number
+        id: loadPrNumber
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var pr_number = Number(fs.readFileSync('./pr_number.txt'));
+            core.setOutput('pr', pr_number)
+
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
@@ -43,7 +52,7 @@ jobs:
           file: coverage.txt
           flags: unittests
           name: codecov-umbrella
-          override_commit: ${{ github.event.workflow_run.head_commit.id }}
+          override_pr: ${{ steps.loadPrNumber.outputs.pr }}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
