@@ -10,7 +10,7 @@ jobs:
   cb-ci-reports-job:
     name: CB-CI-REPORTS-JOB
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow.name == 'CB-CI-ACTIONS-WORKFLOW' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check Environment variable
         env:
@@ -26,14 +26,6 @@ jobs:
           workflow: cb-actions.yaml
           workflow_conclusion: success
           name: cb-actions-artifact
-
-      - name: Download cb-actions-target-artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: cb-actions-target.yaml
-          workflow_conclusion: success
-          name: cb-actions-target-artifact
 
       - name: Display structure of downloaded files
         run: ls -R
@@ -73,3 +65,26 @@ jobs:
             - Created by [commit-comment][1]
 
             [1]: https://github.com/peter-evans/commit-comment
+
+  cb-ci-reports-target-job:
+    name: CB-CI-REPORTS-TARGET-JOB
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow.name == 'CB-CI-ACTIONS-TRAGET-WORKFLOW' && github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check Environment variable
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          echo "workflow starting..."
+
+      - name: Download cb-actions-target-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cb-actions-target.yaml
+          workflow_conclusion: success
+          name: cb-actions-target-artifact
+
+      - name: Display structure of downloaded files
+        run: ls -R
