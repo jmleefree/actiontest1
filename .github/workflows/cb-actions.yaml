@@ -69,14 +69,13 @@ jobs:
       - name: Calc coverage
         run: |
           go test -v -covermode=count -coverprofile=coverage.out
-          cat coverage.out
-
-      - name: Convert coverage to lcov
-        uses: jandelgado/gcov2lcov-action@v1.0.5
-      - name: Check Folder3
-        run: |
-          ls
-          cat coverage.lcov
+      - name: Convert coverage.out to coverage.lcov
+        uses: jandelgado/gcov2lcov-action@v1.0.6
+      - name: Coveralls
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
