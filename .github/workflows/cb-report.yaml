@@ -30,6 +30,12 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          commit: ${{ github.event.workflow_run.head_commit.id }}
+          files: unit-tests.xml
+
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
         uses: actions/github-script@v3
