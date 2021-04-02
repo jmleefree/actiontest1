@@ -61,6 +61,16 @@ jobs:
         run: |
           echo ${PR} > ./outputs/pr_number.txt
 
+      - name: Run Test
+        run: |
+          go get gotest.tools/gotestsum
+          gotestsum --junitfile ./outputs/unit-tests.xml
+
+      - name: Calc coverage
+        run: |
+          go test -v -covermode=count -coverprofile=coverage.out
+          cat coverage.out
+
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:

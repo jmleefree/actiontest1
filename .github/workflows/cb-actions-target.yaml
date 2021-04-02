@@ -56,16 +56,6 @@ jobs:
         run: |
           cat ./outputs/lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
 
-      - name: Run Test
-        run: |
-          go get gotest.tools/gotestsum
-          gotestsum --junitfile ./outputs/unit-tests.xml
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        with:
-          files: ./outputs/unit-tests.xml
-
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
