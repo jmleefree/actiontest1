@@ -61,7 +61,7 @@ jobs:
           override_commit: ${{ github.event.workflow_run.head_commit.id }}
 
       - name: Create Coverage Results
-        id: coverateResult
+        id: coverageResult
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
             var report = {}
             report.summary = "You can check detailed code coverage by clicking on the badge icon to access the codecov site."
             report.text_description = "[![codecov](https://codecov.io/gh/jmleefree/actiontest1/branch/main/graph/badge.svg?token=B7NLYKAZF9)](https://codecov.io/gh/jmleefree/actiontest1)"
-            core.setOutput('resport', JSON.stringify(report))
+            core.setOutput('report', JSON.stringify(report))
 
       - name: Publish Coverage Results
         uses: LouisBrunner/checks-action@v1.1.1
@@ -79,7 +79,7 @@ jobs:
           name: Test Coverage Results
           conclusion: ${{ job.status }}
           output: |
-            ${{ steps.coverateResult.outputs.report }}
+            ${{ steps.coverageResult.outputs.report }}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
