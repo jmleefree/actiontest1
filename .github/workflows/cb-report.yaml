@@ -58,6 +58,7 @@ jobs:
           file: coverage.txt
           flags: unittests
           name: codecov-umbrella
+          override_commit: ${{ github.event.workflow_run.head_commit.id }}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
