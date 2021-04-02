@@ -66,10 +66,9 @@ jobs:
           go get gotest.tools/gotestsum
           gotestsum --junitfile ./outputs/unit-tests.xml
 
-      - name: Calc coverage
+      - name: Run Coverage
         run: |
-          go test -v -covermode=count -coverprofile=coverage.out
-          cat coverage.out
+          go test -v -covermode=count -coverprofile=./outputs/coverage.txt
 
       - name: Upload Result
         uses: actions/upload-artifact@v2

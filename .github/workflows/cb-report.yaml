@@ -36,6 +36,12 @@ jobs:
           commit: ${{ github.event.workflow_run.head_commit.id }}
           files: unit-tests.xml
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.txt
+
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
         uses: actions/github-script@v3
