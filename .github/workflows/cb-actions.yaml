@@ -77,8 +77,11 @@ jobs:
 
       - name: Download artifact
         uses: actions/download-artifact@v2
-        with:
-          name: cb-artifact
 
       - name: Display structure of downloaded files
         run: ls -R
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: ./cb-artifact/unit-tests.xml
