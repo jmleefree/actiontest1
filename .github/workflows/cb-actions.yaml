@@ -2,13 +2,13 @@ name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
-  pull_request:
+  #pull_request:
   pull_request_target:
 
 jobs:
   cb-ci-actions-job:
     name: CB-CI-ACTIONS-JOB
-    if: ${{ github.event_name != 'pull_request_target' }}
+    #if: ${{ github.event_name != 'pull_request_target' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -54,7 +54,7 @@ jobs:
 
   cb-ci-reports-job:
     name: CB-CI-REPORTS-JOB
-    if: ${{ github.event_name != 'pull_request' }}
+    #if: ${{ github.event_name != 'pull_request' }}
     needs: cb-ci-actions-job
     runs-on: ubuntu-latest
     steps:
