@@ -71,6 +71,13 @@ jobs:
           go test -v -covermode=count -coverprofile=coverage.out
           cat coverage.out
 
+      - name: Convert coverage to lcov
+        uses: jandelgado/gcov2lcov-action@v1.0.5
+      - name: Check Folder3
+        run: |
+          ls
+          cat coverage.lcov
+
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
