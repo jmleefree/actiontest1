@@ -2,8 +2,8 @@ name: CB-CI-ACTIONS-WORKFLOW
 
 on:
   push:
-  #pull_request:
   pull_request_target:
+  pull_request:
 
 jobs:
   cb-ci-actions-job:
