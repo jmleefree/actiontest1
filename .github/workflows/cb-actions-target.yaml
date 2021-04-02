@@ -64,7 +64,7 @@ jobs:
         uses: codecov/codecov-action@v1.0.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.txt
+          file: ./outputs/coverage.txt
           flags: unittests
           name: codecov-umbrella
 
