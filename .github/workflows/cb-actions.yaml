@@ -76,10 +76,8 @@ jobs:
           cat ./outputs/coverage.txt
 
       - name: Run Build
-        shell: bash
+        continue-on-error: true
         run: |
-          set -e
-          set -o pipefail
           go build -o test
           echo "======================="
 
