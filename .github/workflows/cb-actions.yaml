@@ -64,26 +64,55 @@ jobs:
       - name: Run Lint
         run: |
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-
-      - name: Run Build
-        continue-on-error: true
-        run: |
-          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
-          buildCheck=`cat ./outputs/build.check`
-          echo "======================="
-          cat ./outputs/build.check
-          cat ./outputs/build.err
-          if [ $buildCheck -ne 0 ]; then exit 1 fi
+          if [ -f "./outputs/lint-result.xml" ] ; then
+            echo "======= lint-result.xml ======="
+            cat ./outputs/lint-result.xml
+          fi
 
       - name: Run Test
         run: |
           go get gotest.tools/gotestsum
-          gotestsum --junitfile ./outputs/unit-tests.xml
+          (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
+          if [ -f "./outputs/unit-test.check" ] ; then
+            echo "======= unit-test.check ======="
+            cat ./outputs/unit-test.check
+          fi    
+          if [ -f "./outputs/unit-test.err" ] ; then
+            echo "======= unit-test.err ======="
+            cat ./outputs/unit-test.err
+          fi   
+          if [ -f "./outputs/unit-tests.xml" ] ; then
+            echo "======= unit-tests.xml ======="
+            cat ./outputs/unit-tests.xml
+          fi
 
       - name: Run Coverage
         run: |
-          go test -v -covermode=count -coverprofile=./outputs/coverage.txt
-          cat ./outputs/coverage.txt
+          (go test -v -covermode=count -coverprofile=./outputs/coverage.txt 2> ./outputs/coverage.err; echo $? > ./outputs/coverage.check ) || true
+          if [ -f "./outputs/coverage.check" ] ; then
+            echo "======= coverage.check ======="
+            cat ./outputs/coverage.check
+          fi    
+          if [ -f "./outputs/coverage.err" ] ; then
+            echo "======= coverage.err ======="
+            cat ./outputs/coverage.err
+          fi   
+          if [ -f "./outputs/coverage.txt" ] ; then
+            echo "======= coverage.txt ======="
+            cat ./outputs/coverage.txt
+          fi
+
+      - name: Run Build
+        run: |
+          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
+          if [ -f "./outputs/build.check" ] ; then
+            echo "======= build.check ======="
+            cat ./outputs/build.check
+          fi    
+          if [ -f "./outputs/build.err" ] ; then
+            echo "======= build.err ======="
+            cat ./outputs/build.err
+          fi
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
