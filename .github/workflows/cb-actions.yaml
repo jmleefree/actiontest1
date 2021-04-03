@@ -68,13 +68,12 @@ jobs:
       - name: Run Build
         continue-on-error: true
         run: |
-          go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check
-
-      - name: Check File
-        run: |
-          ls -R
+          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
+          buildCheck=`cat ./outputs/build.check`
+          echo "======================="
           cat ./outputs/build.check
           cat ./outputs/build.err
+          if [ $buildCheck -ne 0 ]; then exit 1 fi
 
       - name: Run Test
         run: |
