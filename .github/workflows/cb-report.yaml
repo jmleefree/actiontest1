@@ -153,6 +153,7 @@ jobs:
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
               coverageTotal = fs.readFileSync('./coverage.total', 'utf8')
+              coverageTotal = coverageTotal.trim()
               if(coverageTotal == '') coverageTotal = '-'
             }
             console.log('coverageTotal', coverageTotal) 
@@ -161,12 +162,12 @@ jobs:
             var testCaseAllCnt = 0
             const regexTests = /tests="(.*?)"/g;
             while (current = regexTests.exec(unitTestXml)) {
-              testCaseAllCnt += current.pop()
+              testCaseAllCnt += Number(current.pop())
             }
             var testCaseFailCnt = 0
             const regexFailures = /failures="(.*?)"/g;
             while (current = regexFailures.exec(unitTestXml)) {
-              testCaseFailCnt += current.pop()
+              testCaseFailCnt += Number(current.pop())
             }
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
