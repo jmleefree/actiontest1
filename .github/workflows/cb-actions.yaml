@@ -76,7 +76,7 @@ jobs:
           cat ./outputs/coverage.txt
 
       - name: Run Build
-        if: ${{ always() }}
+        shell: bash
         run: |
           go build -o test || true
           echo "======================="
