@@ -67,7 +67,7 @@ jobs:
 
       - name: Run Build
         run: |
-           (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
+          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
           echo "======================="
           cat ./outputs/build.check
 
