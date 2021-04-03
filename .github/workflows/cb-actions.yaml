@@ -65,6 +65,12 @@ jobs:
         run: |
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
 
+      - name: Run Build
+        shell: bash
+        run: |
+          go build -o test || true
+          echo "======================="
+
       - name: Run Test
         run: |
           go get gotest.tools/gotestsum
@@ -74,12 +80,6 @@ jobs:
         run: |
           go test -v -covermode=count -coverprofile=./outputs/coverage.txt
           cat ./outputs/coverage.txt
-
-      - name: Run Build
-        shell: bash
-        run: |
-          . go build -o test || true
-          echo "======================="
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
