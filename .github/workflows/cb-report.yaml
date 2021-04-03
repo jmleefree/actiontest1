@@ -144,11 +144,11 @@ jobs:
               core.setOutput('buildSuccessReport', JSON.stringify(report))                
             }
 
-            var summaryReport = 'Summary Result\n'
+            var summaryReport = '# Summary Result\n'
 
             deadLintCnt = (lintResultXml.match(/dead/g) || []).length
             console.log('deadLintCnt', deadLintCnt) 
-            summaryReport += 'dead lint : ' + deadLintCnt + ' found\n'
+            summaryReport += '- dead lint : ' + deadLintCnt + ' found\n'
 
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
@@ -157,7 +157,7 @@ jobs:
               if(coverageTotal == '') coverageTotal = '-'
             }
             console.log('coverageTotal', coverageTotal) 
-            summaryReport += 'coverage total : ' + coverageTotal + '\n'
+            summaryReport += '- coverage total : ' + coverageTotal + '\n'
 
             var testCaseAllCnt = 0
             const regexTests = /tests="(.*?)"/g;
@@ -171,12 +171,12 @@ jobs:
             }
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
-            summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
+            summaryReport += '- junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
 
             if(buildCheck != 0) {
-              summaryReport += 'build : fail\n'
+              summaryReport += '- build : fail\n'
             } else {
-              summaryReport += 'build : success\n'
+              summaryReport += '- build : success\n'
             }
 
             console.log('summaryReport', summaryReport)   
