@@ -50,6 +50,13 @@ jobs:
             console.log('prNumber', prNumber)
             core.setOutput('prNumber', prNumber)
 
+            var lintResultXml = ''
+            if (fs.existsSync('./lint-result.xml')) {
+              lintResultXml = fs.readFileSync('./lint-result.xml', 'utf8')
+            }
+            console.log('lintResultXml', lintResultXml)  
+            core.setOutput('lintResultXml', lintResultXml)              
+
             var unitTestCheck = 0
             if (fs.existsSync('./unit-test.check')) {
               unitTestCheck = Number(fs.readFileSync('./unit-test.check', 'utf8'))
@@ -137,7 +144,20 @@ jobs:
               core.setOutput('buildSuccessReport', JSON.stringify(report))                
             }
 
-            var summaryReport = 'Summary Result'
+            var summaryReport = 'Summary Result\n'
+
+            deadLintCnt = (lintResultXml.match(/dead/g) || []).length
+            console.log('deadLintCnt', deadLintCnt) 
+            summaryReport += 'dead line : ' + deadLintCnt + ' found\n'
+
+            var coverageTotal = '-'
+            if (fs.existsSync('./coverage.total')) {
+              coverageTotal = fs.readFileSync('./coverage.total', 'utf8')
+              if(coverageTotal == '') coverageTotal = '-'
+            }
+            console.log('coverageTotal', coverageTotal) 
+            summaryReport += 'coverage total : ' + coverageTotal + '\n'
+
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 

@@ -102,6 +102,8 @@ jobs:
             cat ./outputs/coverage.txt
           fi
 
+          (go tool cover -func ./outputs/coverage.txt | grep total | awk '{print $3}' > ./outputs/coverage.total) || true
+
       - name: Run Build
         run: |
           (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
