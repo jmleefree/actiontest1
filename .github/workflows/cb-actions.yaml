@@ -77,9 +77,8 @@ jobs:
 
       - name: Run Build
         run: |
-          $(go build -o test | tee ./outputs/build-result.txt) || true
+          go build -o test || true
           echo "======================="
-          cat ./outputs/build-result.txt
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
