@@ -45,14 +45,14 @@ jobs:
 
             var prNumber = 0
             if (fs.existsSync('./pr_number.txt')) {
-              prNumber = Number(fs.readFileSync('./pr_number.txt'))
+              prNumber = Number(fs.readFileSync('./pr_number.txt', 'utf8'))
             }
             console.log('prNumber', prNumber)
             core.setOutput('prNumber', prNumber)
 
             var unitTestCheck = 0
             if (fs.existsSync('./unit-test.check')) {
-              unitTestCheck = Number(fs.readFileSync('./unit-test.check'))
+              unitTestCheck = Number(fs.readFileSync('./unit-test.check', 'utf8'))
             }
             console.log('unitTestCheck', unitTestCheck)   
             core.setOutput('unitTestCheck', unitTestCheck)   
@@ -66,42 +66,42 @@ jobs:
 
             var unitTestXml = ''
             if (fs.existsSync('./unit-tests.xml')) {
-              unitTestXml = fs.readFileSync('./unit-tests.xml')
+              unitTestXml = fs.readFileSync('./unit-tests.xml', 'utf8')
             }
             console.log('unitTestXml', unitTestXml)  
             core.setOutput('unitTestXml', unitTestXml)  
 
             var coverageCheck = 0
             if (fs.existsSync('./coverage.check')) {
-              coverageCheck = Number(fs.readFileSync('./coverage.check'))
+              coverageCheck = Number(fs.readFileSync('./coverage.check', 'utf8'))
             }
             console.log('coverageCheck', coverageCheck)  
             core.setOutput('coverageCheck', coverageCheck)   
 
             var coverageErr = ''
             if (fs.existsSync('./coverage.err')) {
-              coverageErr = fs.readFileSync('./coverage.err')
+              coverageErr = fs.readFileSync('./coverage.err', 'utf8')
             }
             console.log('coverageErr', coverageErr) 
             core.setOutput('coverageErr', coverageErr)            
 
             var coverageTxt = ''
             if (fs.existsSync('./coverage.txt')) {
-              coverageTxt = fs.readFileSync('./coverage.txt')
+              coverageTxt = fs.readFileSync('./coverage.txt', 'utf8')
             }
             console.log('coverageTxt', coverageTxt) 
             core.setOutput('coverageTxt', coverageTxt)    
 
             var buildCheck = 0
             if (fs.existsSync('./build.check')) {
-              buildCheck = Number(fs.readFileSync('./build.check'))
+              buildCheck = Number(fs.readFileSync('./build.check', 'utf8'))
             }
             console.log('buildCheck', buildCheck)   
             core.setOutput('buildCheck', buildCheck)   
 
             var buildErr = ''
             if (fs.existsSync('./build.err')) {
-              buildErr = fs.readFileSync('./build.err')
+              buildErr = fs.readFileSync('./build.err', 'utf8')
             }
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
