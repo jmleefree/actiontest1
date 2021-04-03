@@ -179,6 +179,7 @@ jobs:
               summaryReport += 'build : success\n'
             }
 
+            summaryReport = summaryReport.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A')
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
@@ -264,7 +265,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
-              body: 'test %'
+              body: '${{ steps.loadResultInfo.outputs.summaryReport }}'
             });
 
       - name: Publish Summary Results(Push)
