@@ -223,7 +223,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
-              body: ${{ steps.loadResultInfo.outputs.summaryReport }}
+              body: '${{ steps.loadResultInfo.outputs.summaryReport }}'
             });
 
       - name: Publish Summary Results(Push)
