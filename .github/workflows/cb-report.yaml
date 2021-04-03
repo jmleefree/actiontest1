@@ -151,7 +151,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
           name: Publish Unit Test Results(Fail)
-          conclusion: fail
+          conclusion: failure
           output: |
             ${{ steps.loadResultInfo.outputs.unitTestErrReport }}
 
@@ -183,7 +183,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
           name: Publish Coverage Results(Fail)
-          conclusion: fail
+          conclusion: failure
           output: |
             ${{ steps.coverageResult.outputs.coverageErrReport }}
 
@@ -205,7 +205,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
           name: Publish Build Results(Fail)
-          conclusion: fail
+          conclusion: failure
           output: |
             ${{ steps.coverageResult.outputs.buildErrReport }}
 
