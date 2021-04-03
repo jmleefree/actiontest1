@@ -68,12 +68,9 @@ jobs:
       - name: Run Build
         shell: bash
         run: |
-          retVal = $(go build -o test | tee tmp.txt ) || true
+          (retVal = $(go build -o test)) || true
           echo "======================="
-          case $retVal in
-              0) echo "success"
-              1) echo "fail"
-          esac
+          echo $retVal
 
       - name: Run Test
         run: |
