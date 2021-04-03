@@ -264,7 +264,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
-              body: 'test'
+              body: 'test %'
             });
 
       - name: Publish Summary Results(Push)
