@@ -68,7 +68,7 @@ jobs:
           script: |
             var report = {}
             report.summary = "You can check detailed code coverage by clicking on the badge icon to access the codecov site."
-            report.text_description = "[![codecov](https://codecov.io/gh/jmleefree/actiontest1/branch/main/graph/badge.svg?token=B7NLYKAZF9)](https://codecov.io/gh/jmleefree/actiontest1)"
+            report.text_description = "[![codecov](https://codecov.io/gh/${{ github.repository }}/branch/${{ github.event.repository.default_branch }}/graph/badge.svg)](https://codecov.io/gh/${{ github.repository }})"
             core.setOutput('report', JSON.stringify(report))
 
       - name: Publish Coverage Results
