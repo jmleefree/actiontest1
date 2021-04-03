@@ -158,19 +158,25 @@ jobs:
             console.log('coverageTotal', coverageTotal) 
             summaryReport += 'coverage total : ' + coverageTotal + '\n'
 
-            const re1 = /tests="(.*?)"/g;
-            while (current = re1.exec(unitTestXml)) {
-              console.log('tests',current.pop())
-            }
-            const re2 = /failures="(.*?)"/g;
-            while (current = re2.exec(unitTestXml)) {
-              console.log('failure',current.pop())
-            }
             var testCaseAllCnt = 0
+            const regexTests = /tests="(.*?)"/g;
+            while (current = regexTests.exec(unitTestXml)) {
+              testCaseAllCnt += current.pop()
+            }
             var testCaseFailCnt = 0
+            const regexFailures = /failures="(.*?)"/g;
+            while (current = regexFailures.exec(unitTestXml)) {
+              testCaseFailCnt += current.pop()
+            }
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
             summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
+
+            if(buildCheck != 0) {
+              summaryReport += 'build : fail\n'
+            } else {
+              summaryReport += 'build : success\n'
+            }
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
