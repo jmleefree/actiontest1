@@ -59,49 +59,49 @@ jobs:
 
             var unitTestErr = ''
             if (fs.existsSync('./unit-test.err')) {
-              unitTestCheck = fs.readFileSync('./unit-test.err')
+              unitTestErr = fs.readFileSync('./unit-test.err')
             }
             console.log('unitTestErr', unitTestErr)   
             core.setOutput('unitTestErr', unitTestErr)            
 
             var unitTestXml = ''
             if (fs.existsSync('./unit-tests.xml')) {
-              unitTestCheck = fs.readFileSync('./unit-tests.xml')
+              unitTestXml = fs.readFileSync('./unit-tests.xml')
             }
             console.log('unitTestXml', unitTestXml)  
             core.setOutput('unitTestXml', unitTestXml)  
 
             var coverageCheck = 0
             if (fs.existsSync('./coverage.check')) {
-              unitTestCheck = Number(fs.readFileSync('./coverage.check'))
+              coverageCheck = Number(fs.readFileSync('./coverage.check'))
             }
             console.log('coverageCheck', coverageCheck)  
             core.setOutput('coverageCheck', coverageCheck)   
 
             var coverageErr = ''
             if (fs.existsSync('./coverage.err')) {
-              unitTestCheck = fs.readFileSync('./coverage.err')
+              coverageErr = fs.readFileSync('./coverage.err')
             }
             console.log('coverageErr', coverageErr) 
             core.setOutput('coverageErr', coverageErr)            
 
             var coverageTxt = ''
             if (fs.existsSync('./coverage.txt')) {
-              unitTestCheck = fs.readFileSync('./coverage.txt')
+              coverageTxt = fs.readFileSync('./coverage.txt')
             }
             console.log('coverageTxt', coverageTxt) 
             core.setOutput('coverageTxt', coverageTxt)    
 
             var buildCheck = 0
             if (fs.existsSync('./build.check')) {
-              unitTestCheck = Number(fs.readFileSync('./build.check'))
+              buildCheck = Number(fs.readFileSync('./build.check'))
             }
             console.log('buildCheck', buildCheck)   
             core.setOutput('buildCheck', buildCheck)   
 
             var buildErr = ''
             if (fs.existsSync('./build.err')) {
-              unitTestCheck = fs.readFileSync('./build.err')
+              buildErr = fs.readFileSync('./build.err')
             }
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
