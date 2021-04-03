@@ -78,7 +78,9 @@ jobs:
       - name: Run Build
         shell: bash
         run: |
-          go build -o test || true
+          set -e
+          set -o pipefail
+          go build -o test
           echo "======================="
 
       - name: Upload Result
