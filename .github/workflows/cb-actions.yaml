@@ -67,8 +67,9 @@ jobs:
 
       - name: Run Build
         shell: bash
+        continue-on-error: true
         run: |
-          (retVal = $(go build -o test)) || true
+          retVal = $(go build -o test)
           echo "======================="
           echo $retVal
 
