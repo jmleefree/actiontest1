@@ -148,7 +148,7 @@ jobs:
 
             deadLintCnt = (lintResultXml.match(/dead/g) || []).length
             console.log('deadLintCnt', deadLintCnt) 
-            summaryReport += '<p>dead lint : ' + deadLintCnt + ' found</p>'
+            summaryReport += 'dead lint : ' + deadLintCnt + ' found\n'
 
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
@@ -157,7 +157,7 @@ jobs:
               if(coverageTotal == '') coverageTotal = '-'
             }
             console.log('coverageTotal', coverageTotal) 
-            summaryReport += '<p>coverage total : ' + coverageTotal + '</p>'
+            summaryReport += 'coverage total : ' + coverageTotal + '\n'
 
             var testCaseAllCnt = 0
             const regexTests = /tests="(.*?)"/g;
@@ -171,12 +171,12 @@ jobs:
             }
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
-            summaryReport += '<p>junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure</p>'
+            summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
 
             if(buildCheck != 0) {
-              summaryReport += '<p>build : fail</p>'
+              summaryReport += 'build : fail\n'
             } else {
-              summaryReport += '<p>build : success</p>'
+              summaryReport += 'build : success\n'
             }
 
             console.log('summaryReport', summaryReport)   
@@ -256,16 +256,11 @@ jobs:
 
       - name: Publish Summary Results(PR)
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
-        uses: actions/github-script@v3
+        uses: peter-evans/create-or-update-comment@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
-              body: '${{ steps.loadResultInfo.outputs.summaryReport }}'
-            });
+          issue-number: ${{ steps.loadResultInfo.outputs.prNumber }}
+          body: |
+            ${{ steps.loadResultInfo.outputs.summaryReport }}
 
       - name: Publish Summary Results(Push)
         if: ${{ github.event.workflow_run.event == 'push' }}
