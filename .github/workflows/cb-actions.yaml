@@ -68,10 +68,11 @@ jobs:
       - name: Run Build
         shell: bash
         run: |
+          set -o pipefail
           go build -o test || true
-          retVal=$?
+          buildCheck=$?
           echo "======================="
-          echo $retVal
+          echo $buildCheck
 
       - name: Run Test
         run: |
