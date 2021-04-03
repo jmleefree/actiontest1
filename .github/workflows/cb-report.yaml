@@ -24,12 +24,6 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_commit.id }}
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - run: npm install xpath
-      - run: npm install xmldom
-
       - name: Download cb-actions-artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -164,12 +158,16 @@ jobs:
             console.log('coverageTotal', coverageTotal) 
             summaryReport += 'coverage total : ' + coverageTotal + '\n'
 
-            var xpath = require('xpath'), 
-            dom = require('xmldom').DOMParser
-
-            var doc = new dom().parseFromString(unitTestXml);
-            var testCaseAllCnt = xpath.sum('//@tests', doc);
-            var testCaseFailCnt = xpath.sum('//@failures', doc);
+            const re1 = /tests="(.*?)"/g;
+            while (current = re1.exec(unitTestXml)) {
+              console.log('tests',current.pop())
+            }
+            const re2 = /failures="(.*?)"/g;
+            while (current = re2.exec(unitTestXml)) {
+              console.log('failure',current.pop())
+            }
+            var testCaseAllCnt = 0
+            var testCaseFailCnt = 0
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
             summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
