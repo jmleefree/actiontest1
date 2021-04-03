@@ -75,6 +75,10 @@ jobs:
           go test -v -covermode=count -coverprofile=./outputs/coverage.txt
           cat ./outputs/coverage.txt
 
+      - name: Run Build
+        run: |
+          go build -o test
+
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
