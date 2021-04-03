@@ -73,6 +73,8 @@ jobs:
       - name: Check File
         run: |
           ls -R
+          cat ./outputs/build.check
+          cat ./outputs/build.err
 
       - name: Run Test
         run: |
