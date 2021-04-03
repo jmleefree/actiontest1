@@ -137,6 +137,10 @@ jobs:
               core.setOutput('buildSuccessReport', JSON.stringify(report))                
             }
 
+            var summaryReport = 'Summary Result'
+            console.log('summaryReport', summaryReport)   
+            core.setOutput('summaryReport', summaryReport)
+
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -209,28 +213,22 @@ jobs:
           output: |
             ${{ steps.loadResultInfo.outputs.buildErrReport }}
 
-      - name: PR Comment
+      - name: Publish Summary Results(PR)
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./pr_number.txt'));
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!' + context.eventName
+              issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
+              body: ${{ steps.loadResultInfo.outputs.summaryReport }}
             });
 
-      - name: Create Commit Comment
+      - name: Publish Summary Results(Push)
         if: ${{ github.event.workflow_run.event == 'push' }}
         uses: peter-evans/commit-comment@v1
         with:
           body: |
-            This is a multi-line test comment
-            - With GitHub **Markdown** :sparkles:
-            - Created by [commit-comment][1]
-
-            [1]: https://github.com/peter-evans/commit-comment
+            ${{ steps.loadResultInfo.outputs.summaryReport }}
