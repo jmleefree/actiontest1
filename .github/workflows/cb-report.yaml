@@ -59,7 +59,7 @@ jobs:
 
             var unitTestErr = ''
             if (fs.existsSync('./unit-test.err')) {
-              unitTestErr = fs.readFileSync('./unit-test.err')
+              unitTestErr = fs.readFileSync('./unit-test.err', 'utf8')
             }
             console.log('unitTestErr', unitTestErr)   
             core.setOutput('unitTestErr', unitTestErr)            
