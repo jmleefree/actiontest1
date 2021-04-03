@@ -66,6 +66,7 @@ jobs:
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
 
       - name: Run Build
+        shell: bash
         run: |
           retVal = $(go build -o test | tee tmp.txt ) || true
           echo "======================="
