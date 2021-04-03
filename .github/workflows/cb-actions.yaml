@@ -77,7 +77,7 @@ jobs:
 
       - name: Run Build
         run: |
-          retVal = $(go build -o test | tee ./outputs/build-result.txt)
+          $(go build -o test | tee ./outputs/build-result.txt) || true
           echo "======================="
           cat ./outputs/build-result.txt
 
