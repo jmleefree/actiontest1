@@ -260,12 +260,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var fs = require('fs');
-            prNumber = Number(fs.readFileSync('./pr_number.txt'))
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: prNumber,
+              issue_number: ${{ steps.loadResultInfo.outputs.prNumber }},
               body: 'test'
             });
 
