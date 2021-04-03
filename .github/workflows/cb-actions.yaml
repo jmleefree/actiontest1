@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          go build -o test || true
+          go build -o test | true
           buildCheck=$?
           echo "======================="
           echo $buildCheck
