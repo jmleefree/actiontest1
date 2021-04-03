@@ -174,7 +174,7 @@ jobs:
           name: Publish Coverage Results(Success)
           conclusion: success
           output: |
-            ${{ steps.coverageResult.outputs.coverageSuccessReport }}
+            ${{ steps.loadResultInfo.outputs.coverageSuccessReport }}
 
       - name: Publish Coverage Results(Fail)
         if: ${{ steps.loadResultInfo.outputs.coverageCheck != 0 }}
@@ -185,7 +185,7 @@ jobs:
           name: Publish Coverage Results(Fail)
           conclusion: failure
           output: |
-            ${{ steps.coverageResult.outputs.coverageErrReport }}
+            ${{ steps.loadResultInfo.outputs.coverageErrReport }}
 
       - name: Publish Build Results(Success)
         if: ${{ steps.loadResultInfo.outputs.buildCheck == 0 }}
@@ -196,7 +196,7 @@ jobs:
           name: Publish Build Results(Success)
           conclusion: success
           output: |
-            ${{ steps.coverageResult.outputs.buildSuccessReport }}
+            ${{ steps.loadResultInfo.outputs.buildSuccessReport }}
 
       - name: Publish Build Results(Fail)
         if: ${{ steps.loadResultInfo.outputs.buildCheck != 0 }}
@@ -207,7 +207,7 @@ jobs:
           name: Publish Build Results(Fail)
           conclusion: failure
           output: |
-            ${{ steps.coverageResult.outputs.buildErrReport }}
+            ${{ steps.loadResultInfo.outputs.buildErrReport }}
 
       - name: PR Comment
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
