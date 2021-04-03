@@ -66,10 +66,13 @@ jobs:
           golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
 
       - name: Run Build
+        continue-on-error: true
         run: |
-          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
-          echo "======================="
-          cat ./outputs/build.check
+          go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check
+
+      - name: Check File
+        run: |
+          ls -R
 
       - name: Run Test
         run: |
