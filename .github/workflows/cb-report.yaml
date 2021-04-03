@@ -148,7 +148,7 @@ jobs:
 
             deadLintCnt = (lintResultXml.match(/dead/g) || []).length
             console.log('deadLintCnt', deadLintCnt) 
-            summaryReport += 'dead line : ' + deadLintCnt + ' found\n'
+            summaryReport += 'dead lint : ' + deadLintCnt + ' found\n'
 
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
@@ -157,6 +157,16 @@ jobs:
             }
             console.log('coverageTotal', coverageTotal) 
             summaryReport += 'coverage total : ' + coverageTotal + '\n'
+
+            var xpath = require('xpath'), 
+            dom = require('xmldom').DOMParser
+
+            var doc = new dom().parseFromString(unitTestXml);
+            var testCaseAllCnt = xpath.sum('//@tests', doc);
+            var testCaseFailCnt = xpath.sum('//@failures', doc);
+            console.log('testCaseAllCnt', testCaseAllCnt) 
+            console.log('testCaseFailCnt', testCaseFailCnt) 
+            summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)

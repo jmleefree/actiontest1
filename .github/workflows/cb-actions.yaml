@@ -69,7 +69,7 @@ jobs:
             cat ./outputs/lint-result.xml
           fi
 
-      - name: Run Test
+      - name: Run Unit Test
         run: |
           go get gotest.tools/gotestsum
           (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
