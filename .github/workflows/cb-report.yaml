@@ -35,15 +35,76 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
 
-      - name: Load PR Number
-        id: loadPrNumber
+      - name: Load Result Info
+        id: loadResultInfo
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var pr_number = Number(fs.readFileSync('./pr_number.txt'));
-            core.setOutput('pr', pr_number)
+
+            var prNumber = 0
+            if (fs.existsSync('./pr_number.txt')) {
+              prNumber = Number(fs.readFileSync('./pr_number.txt'))
+            }
+            console.log('prNumber', prNumber)
+            core.setOutput('prNumber', prNumber)
+
+            var unitTestCheck = 0
+            if (fs.existsSync('./unit-test.check')) {
+              unitTestCheck = Number(fs.readFileSync('./unit-test.check'))
+            }
+            console.log('unitTestCheck', unitTestCheck)   
+            core.setOutput('unitTestCheck', unitTestCheck)   
+
+            var unitTestErr = ''
+            if (fs.existsSync('./unit-test.err')) {
+              unitTestCheck = fs.readFileSync('./unit-test.err')
+            }
+            console.log('unitTestErr', unitTestErr)   
+            core.setOutput('unitTestErr', unitTestErr)            
+
+            var unitTestXml = ''
+            if (fs.existsSync('./unit-tests.xml')) {
+              unitTestCheck = fs.readFileSync('./unit-tests.xml')
+            }
+            console.log('unitTestXml', unitTestXml)  
+            core.setOutput('unitTestXml', unitTestXml)  
+
+            var coverageCheck = 0
+            if (fs.existsSync('./coverage.check')) {
+              unitTestCheck = Number(fs.readFileSync('./coverage.check'))
+            }
+            console.log('coverageCheck', coverageCheck)  
+            core.setOutput('coverageCheck', coverageCheck)   
+
+            var coverageErr = ''
+            if (fs.existsSync('./coverage.err')) {
+              unitTestCheck = fs.readFileSync('./coverage.err')
+            }
+            console.log('coverageErr', coverageErr) 
+            core.setOutput('coverageErr', coverageErr)            
+
+            var coverageTxt = ''
+            if (fs.existsSync('./coverage.txt')) {
+              unitTestCheck = fs.readFileSync('./coverage.txt')
+            }
+            console.log('coverageTxt', coverageTxt) 
+            core.setOutput('coverageTxt', coverageTxt)    
+
+            var buildCheck = 0
+            if (fs.existsSync('./build.check')) {
+              unitTestCheck = Number(fs.readFileSync('./build.check'))
+            }
+            console.log('buildCheck', buildCheck)   
+            core.setOutput('buildCheck', buildCheck)   
+
+            var buildErr = ''
+            if (fs.existsSync('./build.err')) {
+              unitTestCheck = fs.readFileSync('./build.err')
+            }
+            console.log('buildErr', buildErr)   
+            core.setOutput('buildErr', buildErr)
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
