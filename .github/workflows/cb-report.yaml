@@ -148,7 +148,7 @@ jobs:
 
             deadLintCnt = (lintResultXml.match(/dead/g) || []).length
             console.log('deadLintCnt', deadLintCnt) 
-            summaryReport += 'dead lint : ' + deadLintCnt + ' found\n'
+            summaryReport += '<p>dead lint : ' + deadLintCnt + ' found</p>'
 
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
@@ -157,7 +157,7 @@ jobs:
               if(coverageTotal == '') coverageTotal = '-'
             }
             console.log('coverageTotal', coverageTotal) 
-            summaryReport += 'coverage total : ' + coverageTotal + '\n'
+            summaryReport += '<p>coverage total : ' + coverageTotal + '</p>'
 
             var testCaseAllCnt = 0
             const regexTests = /tests="(.*?)"/g;
@@ -171,15 +171,14 @@ jobs:
             }
             console.log('testCaseAllCnt', testCaseAllCnt) 
             console.log('testCaseFailCnt', testCaseFailCnt) 
-            summaryReport += 'junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
+            summaryReport += '<p>junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure</p>'
 
             if(buildCheck != 0) {
-              summaryReport += 'build : fail\n'
+              summaryReport += '<p>build : fail</p>'
             } else {
-              summaryReport += 'build : success\n'
+              summaryReport += '<p>build : success</p>'
             }
 
-            summaryReport = summaryReport.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A')
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
