@@ -74,10 +74,10 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
-    - deadcode # Unused code check
-    - errcheck # Bug Finding
-    - gofmt # Formatting check
-    - revive # Style Check
+    #- deadcode # Unused code check
+    #- errcheck # Bug Finding
+    #- gofmt # Formatting check
+    #- revive # Style Check
 run:
   skip-dirs:
     - conf
