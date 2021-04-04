@@ -30,6 +30,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: cb-actions.yaml
           workflow_conclusion: success
+          path: ./
 
       - name: Display structure of downloaded files
         run: ls -R
