@@ -59,10 +59,26 @@ jobs:
 
       - name: Run Lint
         run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-          if [ -f "./outputs/lint-result.xml" ] ; then
-            echo "======= lint-result.xml ======="
-            cat ./outputs/lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E deadcode | tee ./outputs/deadcode-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E errcheck | tee ./outputs/errcheck-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E gofmt | tee ./outputs/gofmt-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E revive | tee ./outputs/revive-lint-result.xml
+
+          if [ -f "./outputs/deadcode-lint-result.xml" ] ; then
+            echo "======= deadcode-lint-result.xml ======="
+            cat ./outputs/deadcode-lint-result.xml
+          fi
+          if [ -f "./outputs/errcheck-lint-result.xml" ] ; then
+            echo "======= errcheck-lint-result.xml ======="
+            cat ./outputs/errcheck-lint-result.xml
+          fi
+          if [ -f "./outputs/gofmt-lint-result.xml" ] ; then
+            echo "======= gofmt-lint-result.xml ======="
+            cat ./outputs/gofmt-lint-result.xml
+          fi  
+          if [ -f "./outputs/revive-lint-result.xml" ] ; then
+            echo "======= revive-lint-result.xml ======="
+            cat ./outputs/revive-lint-result.xml
           fi
 
       - name: Run Unit Test
@@ -165,7 +181,7 @@ jobs:
 
   cb-ci-deploy-job:
     name: CB-CI-DEPLOY-JOB
-    #if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     needs: [cb-ci-build-job]
     strategy:

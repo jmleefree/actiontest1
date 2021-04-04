@@ -2,143 +2,82 @@ output:
   format: checkstyle
 
 linters-settings:
-  depguard:
-    list-type: blacklist
-    packages:
-      # logging is allowed only by logutils.Log, logrus
-      # is allowed to use only in logutils package
-      - github.com/sirupsen/logrus
-    packages-with-error-message:
-      - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
-  dupl:
-    threshold: 100
-  funlen:
-    lines: 100
-    statements: 50
-  gci:
-    local-prefixes: github.com/golangci/golangci-lint
-  goconst:
-    min-len: 2
-    min-occurrences: 2
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-    disabled-checks:
-      - dupImport # https://github.com/go-critic/go-critic/issues/845
-      - ifElseChain
-      - octalLiteral
-      - whyNoLint
-      - wrapperFunc
-  gocyclo:
-    min-complexity: 15
-  goimports:
-    local-prefixes: github.com/golangci/golangci-lint
-  golint:
-    min-confidence: 0
-  gomnd:
-    settings:
-      mnd:
-        # don't include the "operation" and "assign"
-        checks: argument,case,condition,return
-  govet:
-    check-shadowing: true
-    settings:
-      printf:
-        funcs:
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
-          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
-  lll:
-    line-length: 140
-  maligned:
-    suggest-new: true
-  misspell:
-    locale: US
-  nolintlint:
-    allow-leading-space: true # don't require machine-readable nolint directives (i.e. with no leading space)
-    allow-unused: false # report any unused nolint directives
-    require-explanation: false # don't require an explanation for nolint directives
-    require-specific: false # don't require nolint directives to be specific about which linter is being skipped
+  errcheck:
+    # report about not checking of errors in type assertions: `a := b.(MyStruct)`;
+    # default is false: such cases aren't reported by default.
+    check-type-assertions: false
+
+    # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
+    # default is false: such cases aren't reported by default.
+    check-blank: false
+
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+
+  revive:
+    # see https://github.com/mgechev/revive#available-rules for details.
+    ignore-generated-header: true
+    severity: warning
+    rules:
+      - name: blank-imports
+        severity: warning
+      - name: context-as-argument
+        severity: warning
+      - name: context-keys-type
+        severity: warning
+      - name: dot-imports
+        severity: warning
+      - name: error-return
+        severity: warning
+      - name: error-strings
+        severity: warning
+      - name: error-naming
+        severity: warning
+      - name: exported
+        severity: warning
+      - name: if-return
+        severity: warning
+      - name: increment-decrement
+        severity: warning
+      - name: var-naming
+        severity: warning
+      - name: var-declaration
+        severity: warning
+      - name: package-comments
+        severity: warning
+      - name: range
+        severity: warning
+      - name: receiver-naming
+        severity: warning
+      - name: time-naming
+        severity: warning
+      - name: unexported-return
+        severity: warning
+      - name: indent-error-flow
+        severity: warning
+      - name: errorf
+        severity: warning
+      - name: empty-block
+        severity: warning
+      - name: superfluous-else
+        severity: warning
+      - name: unused-parameter
+        severity: warning
+      - name: unreachable-code
+        severity: warning
+      - name: redefines-builtin-id
+        severity: warning
 
 linters:
   # please, do not use `enable-all`: it's deprecated and will be removed soon.
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
-    - bodyclose
-    - deadcode
-    - depguard
-    - dogsled
-    - dupl
-    - errcheck
-    - exportloopref
-    - exhaustive
-    - funlen
-    - gochecknoinits
-    - goconst
-    - gocritic
-    - gocyclo
-    #- gofmt
-    #- goimports
-    - golint
-    - gomnd
-    - goprintffuncname
-    - gosec
-    - gosimple
-    - govet
-    - ineffassign
-    - lll
-    - misspell
-    - nakedret
-    - noctx
-    - nolintlint
-    - rowserrcheck
-    - staticcheck
-    - structcheck
-    - stylecheck
-    - typecheck
-    - unconvert
-    - unparam
-    - unused
-    - varcheck
-    - whitespace
-
-  # don't enable:
-  # - asciicheck
-  # - scopelint
-  # - gochecknoglobals
-  # - gocognit
-  # - godot
-  # - godox
-  # - goerr113
-  # - interfacer
-  # - maligned
-  # - nestif
-  # - prealloc
-  # - testpackage
-  # - revive
-  # - wsl
-
-issues:
-  # Excluding configuration per-path, per-linter, per-text and per-source
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gomnd
-
-    # https://github.com/go-critic/go-critic/issues/926
-    - linters:
-        - gocritic
-      text: "unnecessaryDefer:"
-
+    - deadcode # Unused code check
+    - errcheck # Bug Finding
+    - gofmt # Formatting check
+    - revive # Style Check
 run:
   skip-dirs:
-    - test/testdata_etc
-    - internal/cache
-    - internal/renameio
-    - internal/robustio
+    - conf
