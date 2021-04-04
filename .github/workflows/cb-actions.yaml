@@ -59,10 +59,26 @@ jobs:
 
       - name: Run Lint
         run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./outputs/lint-result.xml
-          if [ -f "./outputs/lint-result.xml" ] ; then
-            echo "======= lint-result.xml ======="
-            cat ./outputs/lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E deadcode | tee ./outputs/deadcode-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E errcheck | tee ./outputs/errcheck-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E gofmt | tee ./outputs/gofmt-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E revive | tee ./outputs/revive-lint-result.xml
+
+          if [ -f "./outputs/deadcode-lint-result.xml" ] ; then
+            echo "======= deadcode-lint-result.xml ======="
+            cat ./outputs/deadcode-lint-result.xml
+          fi
+          if [ -f "./outputs/errcheck-lint-result.xml" ] ; then
+            echo "======= errcheck-lint-result.xml ======="
+            cat ./outputs/errcheck-lint-result.xml
+          fi
+          if [ -f "./outputs/gofmt-lint-result.xml" ] ; then
+            echo "======= gofmt-lint-result.xml ======="
+            cat ./outputs/gofmt-lint-result.xml
+          fi  
+          if [ -f "./outputs/revive-lint-result.xml" ] ; then
+            echo "======= revive-lint-result.xml ======="
+            cat ./outputs/revive-lint-result.xml
           fi
 
       - name: Run Unit Test
@@ -112,6 +128,9 @@ jobs:
     strategy:
       matrix:
         go: ["1.14", "1.13"]
+    outputs:
+      build_1_13: ${{ steps.build.outputs.build_1_13 }}
+      build_1_14: ${{ steps.build.outputs.build_1_14 }}
     steps:
       - name: Check Environment variable
         env:
@@ -132,6 +151,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Run Build
+        id: build
         run: |
           (go build -o test 2> ./outputs/build.err.${{ matrix.go }}; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
           if [ -f "./outputs/build.check.${{ matrix.go }}" ] ; then
@@ -143,6 +163,16 @@ jobs:
             cat ./outputs/build.err.${{ matrix.go }}
           fi
 
+          buildCheck=`cat ./outputs/build.check.${{ matrix.go }}`
+          if [ ${{ matrix.go }} == "1.13" ]; then
+              echo "Golang ${{ matrix.go }} Build Error !!!"
+              echo "::set-output name=build_1_13::${buildCheck}"
+          fi
+          if [ ${{ matrix.go }} == "1.14" ]; then
+              echo "Golang ${{ matrix.go }} Build Error !!!"
+              echo "::set-output name=build_1_14::${buildCheck}"
+          fi
+
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
@@ -151,7 +181,9 @@ jobs:
 
   cb-ci-deploy-job:
     name: CB-CI-DEPLOY-JOB
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    needs: [cb-ci-build-job]
     strategy:
       matrix:
         go: ["1.13"]
@@ -160,5 +192,6 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
           SECRETS: ${{ toJSON(secrets) }}
+          OUTPUTS: ${{ toJSON(needs.cb-ci-build-job.outputs) }}
         run: |
           echo 'workflow starting'

@@ -41,7 +41,10 @@ jobs:
 
       - name: Run Lint
         run: |
-          golangci-lint run --config ./.github/.golangci.yaml | tee ./lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E deadcode | tee ./deadcode-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E errcheck | tee ./errcheck-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E gofmt | tee ./gofmt-lint-result.xml
+          golangci-lint run --config ./.github/.golangci.yaml --disable-all -E revive | tee ./revive-lint-result.xml
 
       - uses: reviewdog/action-setup@v1
         with:
@@ -50,4 +53,7 @@ jobs:
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cat ./lint-result.xml | reviewdog -f=checkstyle -name="Lint Results" -reporter=github-check
+          cat ./deadcode-lint-result.xml | reviewdog -f=checkstyle -name="Publish Deadcode(Lint) Results" -reporter=github-check
+          cat ./errcheck-lint-result.xml | reviewdog -f=checkstyle -name="Publish Errorcheck(Lint) Results" -reporter=github-check
+          cat ./gofmt-lint-result.xml | reviewdog -f=checkstyle -name="Publish Gofmt(Lint) Results" -reporter=github-check
+          cat ./revive-lint-result.xml | reviewdog -f=checkstyle -name="Publish Revie(Lint) Results" -reporter=github-check
