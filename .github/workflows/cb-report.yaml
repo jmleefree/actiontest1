@@ -180,19 +180,19 @@ jobs:
 
             var summaryReport = '# Summary Result\n'
 
-            deadcodeLintCnt = (deadcodeLintResultXml.match(/dead/g) || []).length
+            deadcodeLintCnt = (deadcodeLintResultXml.match(/source="/g) || []).length
             console.log('deadcodeLintCnt', deadcodeLintCnt) 
             summaryReport += '- deadcode(lint) : ' + deadcodeLintCnt + ' found\n'
 
-            errcheckLintCnt = (errcheckLintResultXml.match(/errcheck/g) || []).length
+            errcheckLintCnt = (errcheckLintResultXml.match(/source="/g) || []).length
             console.log('errcheckLintCnt', errcheckLintCnt) 
             summaryReport += '- errcheck(lint) : ' + errcheckLintCnt + ' found\n'    
 
-            gofmtLintCnt = (gofmtLintResultXml.match(/gofmt/g) || []).length
+            gofmtLintCnt = (gofmtLintResultXml.match(/source="/g) || []).length
             console.log('gofmtLintCnt', gofmtLintCnt) 
             summaryReport += '- gofmt(lint) : ' + gofmtLintCnt + ' found\n'       
 
-            reviveLintCnt = (reviveLintResultXml.match(/revive/g) || []).length
+            reviveLintCnt = (reviveLintResultXml.match(/source="/g) || []).length
             console.log('reviveLintCnt', reviveLintCnt) 
             summaryReport += '- revive(lint) : ' + reviveLintCnt + ' found\n'                               
 
