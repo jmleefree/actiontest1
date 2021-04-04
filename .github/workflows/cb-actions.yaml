@@ -146,6 +146,7 @@ jobs:
 
           buildCheck=`cat ./outputs/build.check.${{ matrix.go }}`
           if [ ${buildCheck} -ne 0 ]; then
+              echo "Golang ${{ matrix.go }} Build Error !!!"
               exit 1
           fi
 
