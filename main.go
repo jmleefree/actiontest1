@@ -15,5 +15,5 @@ func Sub2(x int, y int) int {
 }
 
 func main() {
-	fmt.Printf("result : %d\n", Sum7(5, 6))
+	fmt.Printf("result : %d\n", Sum8(5, 6))
 }
