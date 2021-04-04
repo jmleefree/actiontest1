@@ -18,15 +18,19 @@ func Sub3(x int, y int, z int) int {
 	return x - y
 }
 
-func a() error {
-	fmt.Println("this function returns an error") // EXCLUDED
-	return nil
+type MyError string
+
+func (e MyError) Error() string {
+	return string(e)
+}
+
+func customError() error {
+	return MyError("an error occurred")
 }
 
 func main() {
-	test := 3
+	//test := 3
 	fmt.Printf("result : %d\n", Sum(5, 6))
 
-	_ = a() // BLANK
-	a()     // UNCHECKED
+	customError() // UNCHECKED
 }
