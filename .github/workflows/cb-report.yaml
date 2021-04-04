@@ -30,10 +30,9 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: cb-actions.yaml
           workflow_conclusion: success
-          path: ./
 
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -R ./cb-artifact*
 
       - name: Load Result Info
         id: loadResultInfo
@@ -44,29 +43,29 @@ jobs:
             var fs = require('fs');
 
             var prNumber = 0
-            if (fs.existsSync('./pr_number.txt')) {
-              prNumber = Number(fs.readFileSync('./pr_number.txt', 'utf8'))
+            if (fs.existsSync('./cb-artifact/pr_number.txt')) {
+              prNumber = Number(fs.readFileSync('./cb-artifact/pr_number.txt', 'utf8'))
             }
             console.log('prNumber', prNumber)
             core.setOutput('prNumber', prNumber)
 
             var lintResultXml = ''
-            if (fs.existsSync('./lint-result.xml')) {
-              lintResultXml = fs.readFileSync('./lint-result.xml', 'utf8')
+            if (fs.existsSync('./cb-artifact/lint-result.xml')) {
+              lintResultXml = fs.readFileSync('./cb-artifact/lint-result.xml', 'utf8')
             }
             console.log('lintResultXml', lintResultXml)  
             core.setOutput('lintResultXml', lintResultXml)              
 
             var unitTestCheck = 0
-            if (fs.existsSync('./unit-test.check')) {
-              unitTestCheck = Number(fs.readFileSync('./unit-test.check', 'utf8'))
+            if (fs.existsSync('./cb-artifact/unit-test.check')) {
+              unitTestCheck = Number(fs.readFileSync('./cb-artifact/unit-test.check', 'utf8'))
             }
             console.log('unitTestCheck', unitTestCheck)   
             core.setOutput('unitTestCheck', unitTestCheck)   
 
             var unitTestErr = ''
-            if (fs.existsSync('./unit-test.err')) {
-              unitTestErr = fs.readFileSync('./unit-test.err', 'utf8')
+            if (fs.existsSync('./cb-artifact/unit-test.err')) {
+              unitTestErr = fs.readFileSync('./cb-artifact/unit-test.err', 'utf8')
             }
             console.log('unitTestErr', unitTestErr)   
             core.setOutput('unitTestErr', unitTestErr)
@@ -79,22 +78,22 @@ jobs:
             }               
 
             var unitTestXml = ''
-            if (fs.existsSync('./unit-tests.xml')) {
-              unitTestXml = fs.readFileSync('./unit-tests.xml', 'utf8')
+            if (fs.existsSync('./cb-artifact/unit-tests.xml')) {
+              unitTestXml = fs.readFileSync('./cb-artifact/unit-tests.xml', 'utf8')
             }
             console.log('unitTestXml', unitTestXml)  
             core.setOutput('unitTestXml', unitTestXml)  
 
             var coverageCheck = 0
-            if (fs.existsSync('./coverage.check')) {
-              coverageCheck = Number(fs.readFileSync('./coverage.check', 'utf8'))
+            if (fs.existsSync('./cb-artifact/coverage.check')) {
+              coverageCheck = Number(fs.readFileSync('./cb-artifact/coverage.check', 'utf8'))
             }
             console.log('coverageCheck', coverageCheck)  
             core.setOutput('coverageCheck', coverageCheck)   
 
             var coverageErr = ''
-            if (fs.existsSync('./coverage.err')) {
-              coverageErr = fs.readFileSync('./coverage.err', 'utf8')
+            if (fs.existsSync('./cb-artifact/coverage.err')) {
+              coverageErr = fs.readFileSync('./cb-artifact/coverage.err', 'utf8')
             }
             console.log('coverageErr', coverageErr) 
             core.setOutput('coverageErr', coverageErr)    
@@ -112,20 +111,20 @@ jobs:
             }                   
 
             var coverageTxt = ''
-            if (fs.existsSync('./coverage.txt')) {
-              coverageTxt = fs.readFileSync('./coverage.txt', 'utf8')
+            if (fs.existsSync('./cb-artifact/coverage.txt')) {
+              coverageTxt = fs.readFileSync('./cb-artifact/coverage.txt', 'utf8')
             }
             console.log('coverageTxt', coverageTxt) 
             core.setOutput('coverageTxt', coverageTxt)    
 
             var buildCheck = 0
-            if (fs.existsSync('./build.check.1.13')) {
-              var buildCheckTmp = Number(fs.readFileSync('./build.check.1.13', 'utf8'))
+            if (fs.existsSync('./cb-artifact.1.13/build.check.1.13')) {
+              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact.1.13/build.check.1.13', 'utf8'))
               console.log('buildCheck.1.13', buildCheckTmp)   
               if(buildCheckTmp != 0) buildCheck = 1
             }
-            if (fs.existsSync('./build.check.1.14')) {
-              var buildCheckTmp = Number(fs.readFileSync('./build.check.1.14', 'utf8'))
+            if (fs.existsSync('./cb-artifact.1.14/build.check.1.14')) {
+              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact.1.14/build.check.1.14', 'utf8'))
               console.log('buildCheck.1.14', buildCheckTmp)   
               if(buildCheckTmp != 0) buildCheck = 1
             }            
@@ -133,15 +132,15 @@ jobs:
             core.setOutput('buildCheck', buildCheck)   
 
             var buildErr = ''
-            if (fs.existsSync('./build.err.1.13')) {
+            if (fs.existsSync('./cb-artifact.1.13/build.err.1.13')) {
               buildErr += '\nGolang 1.13 Build Error Raised\n'
               buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./build.err.1.13', 'utf8')
+              buildErr += fs.readFileSync('./cb-artifact.1.13/build.err.1.13', 'utf8')
             }
-            if (fs.existsSync('./build.err.1.14')) {
+            if (fs.existsSync('./cb-artifact.1.14/build.err.1.14')) {
               buildErr += '\nGolang 1.14 Build Error Raised\n'
               buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./build.err.1.14', 'utf8')
+              buildErr += fs.readFileSync('./cb-artifact.1.14/build.err.1.14', 'utf8')
             }            
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
@@ -166,7 +165,7 @@ jobs:
 
             var coverageTotal = '-'
             if (fs.existsSync('./coverage.total')) {
-              coverageTotal = fs.readFileSync('./coverage.total', 'utf8')
+              coverageTotal = fs.readFileSync('./cb-artifact/coverage.total', 'utf8')
               coverageTotal = coverageTotal.trim()
               if(coverageTotal == '') coverageTotal = '-'
             }
@@ -201,7 +200,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           commit: ${{ github.event.workflow_run.head_commit.id }}
-          files: unit-tests.xml
+          files: ./cb-artifact/unit-tests.xml
 
       - name: Publish Unit Test Results(Fail)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck != 0 }}
@@ -219,7 +218,7 @@ jobs:
         uses: codecov/codecov-action@v1.3.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.txt
+          file: ./cb-artifact/coverage.txt
           flags: unittests
           name: codecov-umbrella
           override_commit: ${{ github.event.workflow_run.head_commit.id }}
