@@ -30,6 +30,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: cb-actions.yaml
           workflow_conclusion: success
+          name: cb-actions-artifact
 
       - name: Display structure of downloaded files
         run: ls -R
@@ -118,30 +119,16 @@ jobs:
             core.setOutput('coverageTxt', coverageTxt)    
 
             var buildCheck = 0
-            if (fs.existsSync('./build.check.1.13')) {
-              var buildCheckTmp = Number(fs.readFileSync('./build.check.1.13', 'utf8'))
-              console.log('buildCheck.1.13', buildCheckTmp)   
-              if(buildCheckTmp != 0) buildCheck = 1
+            if (fs.existsSync('./build.check')) {
+              buildCheck = Number(fs.readFileSync('./build.check', 'utf8'))
             }
-            if (fs.existsSync('./build.check.1.14')) {
-              var buildCheckTmp = Number(fs.readFileSync('./build.check.1.14', 'utf8'))
-              console.log('buildCheck.1.14', buildCheckTmp)   
-              if(buildCheckTmp != 0) buildCheck = 1
-            }            
             console.log('buildCheck', buildCheck)   
             core.setOutput('buildCheck', buildCheck)   
 
             var buildErr = ''
-            if (fs.existsSync('./build.err.1.13')) {
-              buildErr += '\nGolang 1.13 Build Error Raised\n'
-              buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./build.err.1.13', 'utf8')
+            if (fs.existsSync('./build.err')) {
+              buildErr = fs.readFileSync('./build.err', 'utf8')
             }
-            if (fs.existsSync('./build.err.1.14')) {
-              buildErr += '\nGolang 1.14 Build Error Raised\n'
-              buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./build.err.1.14', 'utf8')
-            }            
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
 
