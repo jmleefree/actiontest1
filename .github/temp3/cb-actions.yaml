@@ -5,8 +5,8 @@ on:
   pull_request:
 
 jobs:
-  cb-ci-test-job:
-    name: CB-CI-TEST-JOB
+  cb-ci-actions-job:
+    name: CB-CI-ACTIONS-JOB
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,11 +41,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var fs = require('fs');
-            var prNumber = '0'
-
             if(context.eventName == 'pull_request') {
-              prNumber = context.payload.number
+              core.setOutput('pr', context.payload.number)
             } else if(context.eventName == 'push') {
               const result = await github.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
@@ -53,9 +50,16 @@ jobs:
                 commit_sha: context.sha
               })
               const pr = result.data.length > 0 && result.data[0];
-              prNumber = pr && pr.number || '0'
+              core.setOutput('pr', pr && pr.number || '');     
+            } else {
+              core.setOutput('pr', '')
             }
-            fs.writeFileSync('./outputs/pr_number.txt', prNumber, 'utf8');
+
+      - name: Save PR number
+        env:
+          PR: ${{ steps.findPrNumber.outputs.pr }}
+        run: |
+          echo ${PR} > ./outputs/pr_number.txt
 
       - name: Run Lint
         run: |
@@ -100,65 +104,20 @@ jobs:
 
           (go tool cover -func ./outputs/coverage.txt | grep total | awk '{print $3}' > ./outputs/coverage.total) || true
 
-      - name: Upload Result
-        uses: actions/upload-artifact@v2
-        with:
-          name: cb-actions-artifact
-          path: outputs/
-
-  cb-ci-build-job:
-    name: CB-CI-BUILD-JOB
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: ["1.14", "1.13"]
-    steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo 'workflow starting'
-
-      - uses: actions/checkout@v2
-
-      - name: Make Output Folder
-        run: |
-          mkdir -p ./outputs
-
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go }}
-
       - name: Run Build
         run: |
-          (go build -o test 2> ./outputs/build.err.${{ matrix.go }}; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
-          if [ -f "./outputs/build.check.${{ matrix.go }}" ] ; then
-            echo "======= build.check.${{ matrix.go }} ======="
-            cat ./outputs/build.check.${{ matrix.go }}
+          (go build -o test 2> ./outputs/build.err; echo $? > ./outputs/build.check ) || true
+          if [ -f "./outputs/build.check" ] ; then
+            echo "======= build.check ======="
+            cat ./outputs/build.check
           fi    
-          if [ -f "./outputs/build.err.${{ matrix.go }}" ] ; then
-            echo "======= build.err.${{ matrix.go }} ======="
-            cat ./outputs/build.err.${{ matrix.go }}
+          if [ -f "./outputs/build.err" ] ; then
+            echo "======= build.err ======="
+            cat ./outputs/build.err
           fi
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
-          name: cb-actions-artifact-${{ matrix.go }}
+          name: cb-actions-artifact
           path: outputs/
-
-  cb-ci-deploy-job:
-    name: CB-CI-DEPLOY-JOB
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go: ["1.13"]
-    steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo 'workflow starting'
