@@ -1,5 +1,7 @@
 package main
+
 import "fmt"
+
 func Sum(x int, y int) int {
 	return x + y
 }
@@ -17,6 +19,6 @@ func Sub3(x int, y int, z int) int {
 }
 
 func main() {
-	test :=3
+	test := 3
 	fmt.Printf("result : %d\n", Sum(5, 6))
 }

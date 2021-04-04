@@ -13,7 +13,7 @@ linters-settings:
 
   gofmt:
     # simplify code: gofmt with `-s` option, true by default
-    simplify: false
+    simplify: true
 
   revive:
     # see https://github.com/mgechev/revive#available-rules for details.
