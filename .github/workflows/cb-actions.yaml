@@ -105,7 +105,7 @@ jobs:
           CBLOG_ROOT: ${{ github.workspace }}
         run: |
           go get gotest.tools/gotestsum
-          (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
+          (gotestsum --junitfile ./outputs/unit-tests.xml > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
           if [ -f "./outputs/unit-test.check" ] ; then
             echo "======= unit-test.check ======="
             cat ./outputs/unit-test.check
