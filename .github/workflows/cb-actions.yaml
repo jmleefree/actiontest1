@@ -81,10 +81,31 @@ jobs:
             cat ./outputs/revive-lint-result.xml
           fi
 
+      - name: Run Spider Server
+        env:
+          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
+          LOCALHOST: "OFF"
+          PLUGIN_SW: "OFF"
+          MEERKAT: "OFF"
+          CBSTORE_ROOT: "/home/runner/work/cb-spider"
+          CBLOG_ROOT: "/home/runner/work/cb-spider"
+        run: |
+          cd /home/runner/work
+          git clone https://github.com/cloud-barista/cb-spider.git
+          cd ./cb-spider/api-runtime
+          nohup go run apiserver.go > /dev/null 2>&1 &
+          cd ${{ github.workspace }}
+
+          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
+          nc -zv localhost 2048
+
       - name: Run Unit Test
+        env:
+          CBSTORE_ROOT: ${{ github.workspace }}
+          CBLOG_ROOT: ${{ github.workspace }}
         run: |
           go get gotest.tools/gotestsum
-          (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
+          (gotestsum --junitfile ./outputs/unit-tests.xml > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
           if [ -f "./outputs/unit-test.check" ] ; then
             echo "======= unit-test.check ======="
             cat ./outputs/unit-test.check
@@ -100,7 +121,7 @@ jobs:
 
       - name: Run Coverage
         run: |
-          (go test -v -covermode=count -coverprofile=./outputs/coverage.txt 2> ./outputs/coverage.err; echo $? > ./outputs/coverage.check ) || true
+          (go test -v -covermode=count -coverprofile=./outputs/coverage.txt > ./outputs/coverage.err 2>&1; echo $? > ./outputs/coverage.check ) || true
           if [ -f "./outputs/coverage.check" ] ; then
             echo "======= coverage.check ======="
             cat ./outputs/coverage.check
@@ -153,7 +174,7 @@ jobs:
       - name: Run Build
         id: build
         run: |
-          (go build -o test 2> ./outputs/build.err.${{ matrix.go }}; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
+          (go build -o test > ./outputs/build.err.${{ matrix.go }} 2>&1; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
           if [ -f "./outputs/build.check.${{ matrix.go }}" ] ; then
             echo "======= build.check.${{ matrix.go }} ======="
             cat ./outputs/build.check.${{ matrix.go }}
