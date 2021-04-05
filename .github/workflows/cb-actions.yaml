@@ -86,12 +86,12 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
 
-          CBSPIDER_ROOT=/home/runner/work/cb-spider
-          LOCALHOST=OFF
-          PLUGIN_SW=OFF
-          MEERKAT=OFF
-          CBSTORE_ROOT=$CBSPIDER_ROOT
-          CBLOG_ROOT=$CBSPIDER_ROOT
+          export CBSPIDER_ROOT=/home/runner/work/cb-spider
+          export LOCALHOST=OFF
+          export PLUGIN_SW=OFF
+          export MEERKAT=OFF
+          export CBSTORE_ROOT=$CBSPIDER_ROOT
+          export CBLOG_ROOT=$CBSPIDER_ROOT
 
           cd ./cb-spider/api-runtime
           go run apiserver.go &
@@ -101,8 +101,8 @@ jobs:
         run: |
           pwd
 
-          CBSTORE_ROOT=${{ github.workspace }}
-          CBLOG_ROOT=${{ github.workspace }}
+          export CBSTORE_ROOT=${{ github.workspace }}
+          export CBLOG_ROOT=${{ github.workspace }}
 
           env
 
