@@ -90,8 +90,6 @@ jobs:
           CBSTORE_ROOT: "/home/runner/work/cb-spider"
           CBLOG_ROOT: "/home/runner/work/cb-spider"
         run: |
-          env
-
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
