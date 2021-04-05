@@ -95,7 +95,7 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
-          go run apiserver.go 
+          go run apiserver.go &
           cd ${{ github.workspace }}
 
       - name: Run Unit Test
