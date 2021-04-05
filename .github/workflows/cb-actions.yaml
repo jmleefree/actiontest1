@@ -82,28 +82,27 @@ jobs:
           fi
 
       - name: Run Spider Server
+        env:
+          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
+          LOCALHOST: "OFF"
+          PLUGIN_SW: "OFF"
+          MEERKAT: "OFF"
+          CBSTORE_ROOT: ${CBSPIDER_ROOT}
+          CBLOG_ROOT: ${CBSPIDER_ROOT}
         run: |
-          cd /home/runner/work
-          git clone https://github.com/cloud-barista/cb-spider.git
-
-          echo "::set-env name=CBSPIDER_ROOT::/home/runner/work/cb-spider"
-          echo "::set-env name=LOCALHOST::OFF"
-          echo "::set-env name=PLUGIN_SW::OFF"
-          echo "::set-env name=MEERKAT::OFF"
-          echo "::set-env name=CBSTORE_ROOT::${CBSPIDER_ROOT}"
-          echo "::set-env name=CBLOG_ROOT::${CBSPIDER_ROOT}"
-
           env
 
+          cd /home/runner/work
+          git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
           go run apiserver.go &
           cd ${{ github.workspace }}
 
       - name: Run Unit Test
+        env:
+          CBSTORE_ROOT: ${{ github.workspace }}
+          CBLOG_ROOT: ${{ github.workspace }}
         run: |
-          echo "::set-env name=CBSTORE_ROOT::${{ github.workspace }}"
-          echo "::set-env name=CBLOG_ROOT::${{ github.workspace }}"
-
           env
 
           go get gotest.tools/gotestsum
