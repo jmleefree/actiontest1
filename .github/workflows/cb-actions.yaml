@@ -98,6 +98,10 @@ jobs:
           go run apiserver.go &
           cd ${{ github.workspace }}
 
+          ps -ef | grep go
+          sleep 1m
+          ps -ef | grep go
+
       - name: Run Unit Test
         env:
           CBSTORE_ROOT: ${{ github.workspace }}
