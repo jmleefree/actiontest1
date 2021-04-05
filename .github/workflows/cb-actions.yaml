@@ -96,7 +96,7 @@ jobs:
           nohup go run apiserver.go > /dev/null 2>&1 &
           cd ${{ github.workspace }}
 
-          sleep 2m
+          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
           nc -zv localhost 2048
 
       - name: Run Unit Test
