@@ -98,17 +98,14 @@ jobs:
           nohup go run apiserver.go > /dev/null 2>&1 &
           cd ${{ github.workspace }}
 
-          ps -ef | grep go
-          sleep 1m
-          ps -ef | grep go
+          sleep 2m
+          nc -zv localhost 2048
 
       - name: Run Unit Test
         env:
           CBSTORE_ROOT: ${{ github.workspace }}
           CBLOG_ROOT: ${{ github.workspace }}
         run: |
-          env
-
           go get gotest.tools/gotestsum
           (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
           if [ -f "./outputs/unit-test.check" ] ; then
