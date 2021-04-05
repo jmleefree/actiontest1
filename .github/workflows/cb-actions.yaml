@@ -121,7 +121,7 @@ jobs:
 
       - name: Run Coverage
         run: |
-          (go test -v -covermode=count -coverprofile=./outputs/coverage.txt 2> ./outputs/coverage.err; echo $? > ./outputs/coverage.check ) || true
+          (go test -v -covermode=count -coverprofile=./outputs/coverage.txt > ./outputs/coverage.err 2>&1; echo $? > ./outputs/coverage.check ) || true
           if [ -f "./outputs/coverage.check" ] ; then
             echo "======= coverage.check ======="
             cat ./outputs/coverage.check
@@ -174,7 +174,7 @@ jobs:
       - name: Run Build
         id: build
         run: |
-          (go build -o test 2> ./outputs/build.err.${{ matrix.go }}; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
+          (go build -o test > ./outputs/build.err.${{ matrix.go }} 2>&1; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
           if [ -f "./outputs/build.check.${{ matrix.go }}" ] ; then
             echo "======= build.check.${{ matrix.go }} ======="
             cat ./outputs/build.check.${{ matrix.go }}

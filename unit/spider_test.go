@@ -2,6 +2,7 @@ package unit
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	lib "actiontest1/lib"
@@ -37,6 +38,7 @@ func TestSpider(t *testing.T) {
 		t.Errorf("error raised: %v", err)
 	}
 
+	log.Printf("result : %v\n", result)
 	fmt.Printf("result : %v\n", result)
 
 }
