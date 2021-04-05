@@ -79,5 +79,4 @@ linters:
     #- gofmt # Formatting check
     #- revive # Style Check
 run:
-  skip-dirs:
-    - conf
+  timeout: 2m
