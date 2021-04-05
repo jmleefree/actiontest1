@@ -95,7 +95,7 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
-          go run apiserver.go &
+          nohup go run apiserver.go > /dev/null 2>&1 &
           cd ${{ github.workspace }}
 
           ps -ef | grep go
