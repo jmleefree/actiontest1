@@ -99,6 +99,9 @@ jobs:
 
       - name: Run Unit Test
         run: |
+          CBSTORE_ROOT=${{ github.workspace }}
+          CBLOG_ROOT=${{ github.workspace }}
+
           go get gotest.tools/gotestsum
           (gotestsum --junitfile ./outputs/unit-tests.xml 2> ./outputs/unit-test.err; echo $? > ./outputs/unit-test.check ) || true
           if [ -f "./outputs/unit-test.check" ] ; then
