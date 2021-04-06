@@ -178,6 +178,34 @@ jobs:
               core.setOutput('buildSuccessReport', JSON.stringify(report))                
             }
 
+            var dockerBuildRun = 0
+            var dockerBuildCheck = 0
+            if (fs.existsSync('./cb-artifact-deploy/dockerbuild.check')) {
+              dockerBuildRun = 1
+              dockerBuildCheck = Number(fs.readFileSync('./cb-artifact-deploy/dockerbuild.check', 'utf8'))
+            }
+            console.log('dockerBuildCheck', dockerBuildCheck)   
+            core.setOutput('dockerBuildCheck', dockerBuildCheck)   
+
+            var dockerBuildErr = ''
+            if (fs.existsSync('./cb-artifact-deploy/dockerbuild.err')) {
+              dockerBuildErr = fs.readFileSync('./cb-artifact-deploy/dockerbuild.err', 'utf8')
+            }
+            console.log('dockerBuildErr', dockerBuildErr)   
+            core.setOutput('dockerBuildErr', dockerBuildErr)
+
+            if(dockerBuildCheck != 0) {
+              var report = {}
+              report.summary = "Docker Build Error Raised !!!"
+              report.text_description = dockerBuildErr
+              core.setOutput('dockerBuildErrReport', JSON.stringify(report))  
+            } else {
+              var report = {}
+              report.summary = "Docker Build Success !!!"
+              report.text_description = ''
+              core.setOutput('dockerBuildSuccessReport', JSON.stringify(report))
+            } 
+
             var publishRun = 0
             var publishCheck = 0
             if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.check')) {
@@ -354,6 +382,28 @@ jobs:
           conclusion: failure
           output: |
             ${{ steps.loadResultInfo.outputs.buildErrReport }}
+
+      - name: Docker Build Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.dockerBuildRun == 1 && steps.loadResultInfo.outputs.dockerBuildCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Docker Build Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.dockerBuildSuccessReport }}
+
+      - name: Docker Build Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.dockerBuildRun == 1 && steps.loadResultInfo.outputs.dockerBuildCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Docker Build Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.dockerBuildErrReport }}
 
       - name: Publish Image Results(Success)
         if: ${{ steps.loadResultInfo.outputs.publishRun == 1 && steps.loadResultInfo.outputs.publishCheck == 0 }}
