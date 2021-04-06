@@ -93,7 +93,7 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
-          nohup go run apiserver.go > /dev/null 2>&1 &
+          go run apiserver.go > ./outputs/cb-spider.log 2>&1 &
           cd ${{ github.workspace }}
 
           timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
