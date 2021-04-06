@@ -209,6 +209,9 @@ jobs:
     strategy:
       matrix:
         go: ["1.13"]
+    env:
+      DOCKER_REPO: jmleefree
+      IMAGE_NAME: actiontest1
     steps:
       - name: Check Environment variable
         env:
@@ -226,9 +229,6 @@ jobs:
 
       - name: Prepare Tags
         id: prep
-        env:
-          DOCKER_REPO: jmleefree
-          IMAGE_NAME: actiontest1
         run: |
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -275,5 +275,70 @@ jobs:
 
       - name: Step Stop
         if: ${{ steps.imgbuild.outputs.docker_build_check != 0 }}
+        run: |
+          exit 1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2.1.4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      #- name: Login to Docker Hub
+      #  uses: docker/login-action@v1
+      #  with:
+      #    username: ${{ secrets.DOCKER_USERNAME }}
+      #    password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and publish
+        id: imgpublish
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          file: ./Dockerfile
+          target: prod
+          platforms: linux/amd64 # linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x,linux/arm/v6
+          push: true
+          tags: |
+            ${{ steps.prep.outputs.docker-tags }}
+            ${{ steps.prep.outputs.ghcr-tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Publish Image Check
+        id: imgcheck
+        run: |
+          docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
+          docker image inspect test111
+          echo "::set-output name=docker_publish_check::0"
+
+      - name: Upload Result
+        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-deploy
+          path: outputs/
+
+      - name: Step Stop
+        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
         run: |
           exit 1
