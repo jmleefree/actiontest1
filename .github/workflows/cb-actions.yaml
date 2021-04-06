@@ -81,6 +81,24 @@ jobs:
             cat ./outputs/revive-lint-result.xml
           fi
 
+      - name: Run Spider Server
+        env:
+          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
+          LOCALHOST: "OFF"
+          PLUGIN_SW: "OFF"
+          MEERKAT: "OFF"
+          CBSTORE_ROOT: "/home/runner/work/cb-spider"
+          CBLOG_ROOT: "/home/runner/work/cb-spider"
+        run: |
+          cd /home/runner/work
+          git clone https://github.com/cloud-barista/cb-spider.git
+          cd ./cb-spider/api-runtime
+          go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
+          cd ${{ github.workspace }}
+
+          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
+          nc -zv localhost 2048
+
       - name: Run Unit Test
         env:
           CBSTORE_ROOT: ${{ github.workspace }}
