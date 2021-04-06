@@ -218,6 +218,12 @@ jobs:
         run: |
           echo 'workflow starting'
 
+      - uses: actions/checkout@v2
+
+      - name: Make Output Folder
+        run: |
+          mkdir -p ./outputs
+
       - name: Prepare Tags
         id: prep
         env:
@@ -255,3 +261,9 @@ jobs:
             echo "======= dockerbuild.err ======="
             cat ./outputs/dockerbuild.err
           fi
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-deploy
+          path: outputs/
