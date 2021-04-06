@@ -209,9 +209,6 @@ jobs:
     strategy:
       matrix:
         go: ["1.13"]
-    env:
-      DOCKER_REPO: jmleefree
-      IMAGE_NAME: actiontest1
     steps:
       - name: Check Environment variable
         env:
@@ -229,6 +226,9 @@ jobs:
 
       - name: Prepare Tags
         id: prep
+        env:
+          DOCKER_REPO: jmleefree
+          IMAGE_NAME: actiontest1
         run: |
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
