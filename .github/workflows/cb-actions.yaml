@@ -93,7 +93,7 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
-          nohup go run apiserver.go > /dev/null 2>&1 &
+          go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
           cd ${{ github.workspace }}
 
           timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
@@ -104,8 +104,9 @@ jobs:
           CBSTORE_ROOT: ${{ github.workspace }}
           CBLOG_ROOT: ${{ github.workspace }}
         run: |
-          go get gotest.tools/gotestsum
-          (gotestsum --junitfile ./outputs/unit-tests.xml > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
+          go get -u github.com/jstemmer/go-junit-report
+          (go test -v ./... > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
+          cat ./outputs/unit-test.err | go-junit-report > ./outputs/unit-tests.xml
           if [ -f "./outputs/unit-test.check" ] ; then
             echo "======= unit-test.check ======="
             cat ./outputs/unit-test.check
@@ -208,6 +209,9 @@ jobs:
     strategy:
       matrix:
         go: ["1.13"]
+    env:
+      DOCKER_REPO: jmleefree
+      IMAGE_NAME: actiontest1
     steps:
       - name: Check Environment variable
         env:
@@ -216,3 +220,125 @@ jobs:
           OUTPUTS: ${{ toJSON(needs.cb-ci-build-job.outputs) }}
         run: |
           echo 'workflow starting'
+
+      - uses: actions/checkout@v2
+
+      - name: Make Output Folder
+        run: |
+          mkdir -p ./outputs
+
+      - name: Prepare Tags
+        id: prep
+        run: |
+          VERSION=latest
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+
+          DOCKER_IMAGE=$DOCKER_REPO/$IMAGE_NAME
+          DOCKER_TAGS="${DOCKER_IMAGE}:${VERSION}"
+          if [[ $VERSION =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*$ ]]; then
+            DOCKER_TAGS="$DOCKER_TAGS,${DOCKER_IMAGE}:latest"
+          fi
+          echo ::set-output name=docker-tags::${DOCKER_TAGS}
+          echo ${DOCKER_TAGS}
+          GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          GHCR_TAGS="${GHCR_IMAGE}:${VERSION}"
+          if [[ $VERSION =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}.*$ ]]; then
+            GHCR_TAGS="$GHCR_TAGS,${GHCR_IMAGE}:latest"
+          fi
+          echo ::set-output name=ghcr-tags::${GHCR_TAGS}
+          echo ${GHCR_TAGS}
+
+      - name: Build Image Test
+        id: imgbuild
+        run: |
+          (docker build . --file Dockerfile --tag $IMAGE_NAME > ./outputs/dockerbuild.err 2>&1; echo $? > ./outputs/dockerbuild.check ) || true
+          if [ -f "./outputs/dockerbuild.check" ] ; then
+            echo "======= dockerbuild.check ======="
+            cat ./outputs/dockerbuild.check
+          fi    
+          if [ -f "./outputs/dockerbuild.err" ] ; then
+            echo "======= dockerbuild.err ======="
+            cat ./outputs/dockerbuild.err
+          fi
+
+          dockerBuildCheck=`cat ./outputs/dockerbuild.check`
+          echo "::set-output name=docker_build_check::${dockerBuildCheck}"
+
+      - name: Upload Result
+        if: ${{ steps.imgbuild.outputs.docker_build_check != 0 }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-deploy
+          path: outputs/
+
+      - name: Step Stop
+        if: ${{ steps.imgbuild.outputs.docker_build_check != 0 }}
+        run: |
+          exit 1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2.1.4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      #- name: Login to Docker Hub
+      #  uses: docker/login-action@v1
+      #  with:
+      #    username: ${{ secrets.DOCKER_USERNAME }}
+      #    password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and publish
+        id: imgpublish
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          file: ./Dockerfile
+          target: prod
+          platforms: linux/amd64 # linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x,linux/arm/v6
+          push: true
+          tags: |
+            ${{ steps.prep.outputs.docker-tags }}
+            ${{ steps.prep.outputs.ghcr-tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Publish Image Check
+        id: imgcheck
+        run: |
+          docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
+          docker image inspect test111
+          echo "::set-output name=docker_publish_check::0"
+
+      - name: Upload Result
+        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-deploy
+          path: outputs/
+
+      - name: Step Stop
+        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
+        run: |
+          exit 1
