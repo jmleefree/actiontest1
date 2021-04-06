@@ -325,9 +325,31 @@ jobs:
       - name: Publish Image Check
         id: imgcheck
         run: |
-          docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
-          docker image inspect test111
-          echo "::set-output name=docker_publish_check::0"
+          (docker image inspect ${{ steps.prep.outputs.ghcr-tags }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
+          if [ -f "./outputs/ghcrpublish.check" ] ; then
+            echo "======= ghcrpublish.check ======="
+            cat ./outputs/ghcrpublish.check
+          fi    
+          if [ -f "./outputs/ghcrpublish.err" ] ; then
+            echo "======= ghcrpublish.err ======="
+            cat ./outputs/ghcrpublish.err
+          fi
+
+          ghcrPublishCheck=`cat ./outputs/ghcrpublish.check`
+          echo "::set-output name=ghcr_publish_check::${ghcrPublishCheck}"
+
+          (docker image inspect ${{ steps.prep.outputs.docker-tags }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
+          if [ -f "./outputs/dockerpublish.check" ] ; then
+            echo "======= dockerpublish.check ======="
+            cat ./outputs/dockerpublish.check
+          fi    
+          if [ -f "./outputs/dockerpublish.err" ] ; then
+            echo "======= dockerpublish.err ======="
+            cat ./outputs/dockerpublish.err
+          fi
+
+          dockerPublishCheck=`cat ./outputs/dockerpublish.check`
+          echo "::set-output name=docker_publish_check::${dockerPublishCheck}"
 
       - name: Upload Result
         if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
@@ -337,6 +359,6 @@ jobs:
           path: outputs/
 
       - name: Step Stop
-        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
+        if: ${{ steps.imgcheck.outputs.ghcr_publish_check != 0 || steps.imgcheck.outputs.docker_publish_check != 0 }}
         run: |
           exit 1
