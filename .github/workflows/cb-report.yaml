@@ -178,6 +178,51 @@ jobs:
               core.setOutput('buildSuccessReport', JSON.stringify(report))                
             }
 
+            var publishRun = 0
+            var publishCheck = 0
+            if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.check')) {
+              publishRun = 1
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/ghcrpublish.check', 'utf8'))
+              console.log('ghcrPublishCheck', publishCheckTmp)   
+              if(publishCheckTmp != 0) publishCheck = 1
+            }
+            if (fs.existsSync('./cb-artifact-deploy/dockerpublish.check')) {
+              publishRun = 1
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/dockerpublish.check', 'utf8'))
+              console.log('dockerPublishCheck', publishCheckTmp)   
+              if(publishCheckTmp != 0) publishCheck = 1
+            }      
+            console.log('publishRun', publishRun)   
+            core.setOutput('publishRun', publishRun)                   
+            console.log('publishCheck', publishCheck)   
+            core.setOutput('publishCheck', publishCheck) 
+
+            var publishErr = ''
+            if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.err')) {
+              publishErr += '\nGitHub Container Registry Publish Error Raised\n'
+              publishErr += '------------------------------\n'
+              publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')
+            }
+            if (fs.existsSync('./cb-artifact-deploy/dockerpublish.err')) {
+              publishErr += '\nDocker Hub Publish Error Raised\n'
+              publishErr += '------------------------------\n'
+              publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')
+            }            
+            console.log('publishErr', publishErr)   
+            core.setOutput('publishErr', publishErr)      
+
+            if(publishCheck != 0) {
+              var report = {}
+              report.summary = "Publish Image Error Raised !!!"
+              report.text_description = publishErr
+              core.setOutput('publishErrReport', JSON.stringify(report))     
+            } else {
+              var report = {}
+              report.summary = "Publish Image Success !!!"
+              report.text_description = ''
+              core.setOutput('publishSuccessReport', JSON.stringify(report))                
+            }                  
+
             var summaryReport = '# Summary Result\n'
 
             deadcodeLintCnt = (deadcodeLintResultXml.match(/source="/g) || []).length
@@ -224,6 +269,16 @@ jobs:
             } else {
               summaryReport += '- build : success\n'
             }
+
+            if(publishRun == 1) {
+              if(publishCheck != 0) {
+                summaryReport += '- deploy : fail\n'
+              } else {
+                summaryReport += '- deploy : success\n'
+              }   
+            } else {
+              summaryReport += '- deploy : -\n'
+            }       
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
@@ -299,6 +354,28 @@ jobs:
           conclusion: failure
           output: |
             ${{ steps.loadResultInfo.outputs.buildErrReport }}
+
+      - name: Publish Image Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.publishRun == 1 && steps.loadResultInfo.outputs.publishCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Image Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.publishSuccessReport }}
+
+      - name: Publish Image Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.publishRun == 1 && steps.loadResultInfo.outputs.publishCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Image Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.publishErrReport }}
 
       - name: Publish Summary Results(PR)
         if: ${{ github.event.workflow_run.event == 'pull_request' }}

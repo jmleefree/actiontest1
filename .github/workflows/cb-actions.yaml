@@ -325,6 +325,8 @@ jobs:
       - name: Publish Image Check
         id: imgcheck
         run: |
+          sleep 10s
+
           (docker image inspect ${{ steps.prep.outputs.ghcr-tags }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
