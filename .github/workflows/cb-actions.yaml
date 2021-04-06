@@ -209,6 +209,9 @@ jobs:
     strategy:
       matrix:
         go: ["1.13"]
+    env:
+      DOCKER_REPO: jmleefree
+      IMAGE_NAME: actiontest1
     steps:
       - name: Check Environment variable
         env:
@@ -226,9 +229,6 @@ jobs:
 
       - name: Prepare Tags
         id: prep
-        env:
-          DOCKER_REPO: jmleefree
-          IMAGE_NAME: actiontest1
         run: |
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -251,6 +251,7 @@ jobs:
           echo ${GHCR_TAGS}
 
       - name: Build Image Test
+        id: imgbuild
         run: |
           (docker build . --file Dockerfile --tag $IMAGE_NAME > ./outputs/dockerbuild.err 2>&1; echo $? > ./outputs/dockerbuild.check ) || true
           if [ -f "./outputs/dockerbuild.check" ] ; then
@@ -262,8 +263,17 @@ jobs:
             cat ./outputs/dockerbuild.err
           fi
 
+          dockerBuildCheck=`cat ./outputs/dockerbuild.check`
+          echo "::set-output name=docker_build_check::${dockerBuildCheck}"
+
       - name: Upload Result
+        if: ${{ steps.imgbuild.outputs.docker_build_check != 0 }}
         uses: actions/upload-artifact@v2
         with:
           name: cb-artifact-deploy
           path: outputs/
+
+      - name: Step Stop
+        if: ${{ steps.imgbuild.outputs.docker_build_check != 0 }}
+        run: |
+          exit 1
