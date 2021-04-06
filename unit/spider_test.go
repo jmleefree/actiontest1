@@ -40,7 +40,7 @@ func TestSpider(t *testing.T) {
 		t.Errorf("error raised: %v", err)
 	}
 
-	t.Errorf("t.Errorf result : %v\n", result)
+	//t.Errorf("t.Errorf result : %v\n", result)
 	t.Logf("t.Logf result : %v\n", result)
 
 	fmt.Printf("fmt result : %v\n", result)
