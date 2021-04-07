@@ -323,6 +323,8 @@ jobs:
         id: imgcheck
         run: |
           docker images
+          docker pull ${{ steps.prep.outputs.ghcr-tags }}@${{ steps.imgpublish.outputs.digest }}
+          docker images
           docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
           if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
               echo 0 > ./outputs/ghcrpublish.check
