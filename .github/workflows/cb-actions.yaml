@@ -320,7 +320,13 @@ jobs:
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
-          (docker search ${{ steps.prep.outputs.ghcr-tags }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
+          if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
+              echo 0 > ./outputs/ghcrpublish.check
+              echo "'${{ steps.imgpublish.outputs.digest }}' found"
+          else
+              echo 1 > ./outputs/ghcrpublish.check
+              echo "'${{ steps.imgpublish.outputs.digest }}' not found"
+          fi
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
             cat ./outputs/ghcrpublish.check
