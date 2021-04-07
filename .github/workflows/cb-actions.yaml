@@ -326,22 +326,6 @@ jobs:
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
-          (docker pull ${{ steps.prep.outputs.docker-tags }}@${{ steps.imgpublish.outputs.digest }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
-          if [ -f "./outputs/dockerpublish.check" ] ; then
-            echo "======= dockerpublish.check ======="
-            cat ./outputs/dockerpublish.check
-          fi    
-          if [ -f "./outputs/dockerpublish.err" ] ; then
-            echo "======= dockerpublish.err ======="
-            cat ./outputs/dockerpublish.err
-          fi
-
-          dockerPublishCheck=`cat ./outputs/dockerpublish.check`
-          echo "::set-output name=docker_publish_check::${dockerPublishCheck}"
-
-          (docker rmi ${{ steps.prep.outputs.docker-image }}) || true
-          docker images
-
           (docker pull ${{ steps.prep.outputs.ghcr-tags }}@${{ steps.imgpublish.outputs.digest }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
@@ -354,6 +338,22 @@ jobs:
 
           ghcrPublishCheck=`cat ./outputs/ghcrpublish.check`
           echo "::set-output name=ghcr_publish_check::${ghcrPublishCheck}"
+
+          docker rmi $(docker images -f "dangling=true" -q)
+          docker images
+                  
+          (docker pull ${{ steps.prep.outputs.docker-tags }}@${{ steps.imgpublish.outputs.digest }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
+          if [ -f "./outputs/dockerpublish.check" ] ; then
+            echo "======= dockerpublish.check ======="
+            cat ./outputs/dockerpublish.check
+          fi    
+          if [ -f "./outputs/dockerpublish.err" ] ; then
+            echo "======= dockerpublish.err ======="
+            cat ./outputs/dockerpublish.err
+          fi
+
+          dockerPublishCheck=`cat ./outputs/dockerpublish.check`
+          echo "::set-output name=docker_publish_check::${dockerPublishCheck}"
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
