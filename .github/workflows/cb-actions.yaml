@@ -315,6 +315,7 @@ jobs:
             ${{ steps.prep.outputs.ghcr-tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+          load: true
 
       - name: Publish Image Check
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
