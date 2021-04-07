@@ -184,6 +184,8 @@ jobs:
               dockerBuildRun = 1
               dockerBuildCheck = Number(fs.readFileSync('./cb-artifact-deploy/dockerbuild.check', 'utf8'))
             }
+            console.log('dockerBuildRun', dockerBuildRun)   
+            core.setOutput('dockerBuildRun', dockerBuildRun)             
             console.log('dockerBuildCheck', dockerBuildCheck)   
             core.setOutput('dockerBuildCheck', dockerBuildCheck)   
 
@@ -293,9 +295,19 @@ jobs:
             summaryReport += '- junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
 
             if(buildCheck != 0) {
-              summaryReport += '- build : fail\n'
+              summaryReport += '- go build : fail\n'
             } else {
-              summaryReport += '- build : success\n'
+              summaryReport += '- go build : success\n'
+            }
+
+            if(dockerBuildRun == 1) {
+              if(dockerBuildCheck != 0) {
+                summaryReport += '- docker build : fail\n'
+              } else {
+                summaryReport += '- docker build : success\n'
+              }   
+            } else {
+              summaryReport += '- docker build : -\n'
             }
 
             if(publishRun == 1) {
