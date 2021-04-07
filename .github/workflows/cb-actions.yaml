@@ -266,7 +266,7 @@ jobs:
           dockerBuildCheck=`cat ./outputs/dockerbuild.check`
           echo "::set-output name=docker_build_check::${dockerBuildCheck}"
 
-          docker rmi $IMAGE_NAME
+          (docker rmi $IMAGE_NAME) || true
 
       - name: Set up QEMU
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
@@ -322,17 +322,7 @@ jobs:
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
-          docker images
-          docker pull ${{ steps.prep.outputs.ghcr-tags }}@${{ steps.imgpublish.outputs.digest }}
-          docker images
-          docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
-          if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
-              echo 0 > ./outputs/ghcrpublish.check
-              echo "'${{ steps.imgpublish.outputs.digest }}' found" > ./outputs/ghcrpublish.err
-          else
-              echo 1 > ./outputs/ghcrpublish.check
-              echo "'${{ steps.imgpublish.outputs.digest }}' not found" > ./outputs/ghcrpublish.err
-          fi
+          (docker pull ${{ steps.prep.outputs.ghcr-tags }}@${{ steps.imgpublish.outputs.digest }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
             cat ./outputs/ghcrpublish.check
@@ -345,7 +335,7 @@ jobs:
           ghcrPublishCheck=`cat ./outputs/ghcrpublish.check`
           echo "::set-output name=ghcr_publish_check::${ghcrPublishCheck}"
 
-          (docker search ${{ steps.prep.outputs.docker-tags }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
+          (docker pull ${{ steps.prep.outputs.docker-tags }}@${{ steps.imgpublish.outputs.digest }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
           if [ -f "./outputs/dockerpublish.check" ] ; then
             echo "======= dockerpublish.check ======="
             cat ./outputs/dockerpublish.check
