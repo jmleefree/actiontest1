@@ -312,19 +312,18 @@ jobs:
           context: ./
           file: ./Dockerfile
           platforms: linux/amd64 # linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x,linux/arm/v6
-          #push: true
+          push: true
           tags: |
             ${{ steps.prep.outputs.ghcr-tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-          load: true
 
       - name: Publish Image Check
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
           docker images
-          docker image inspect actiontest1
+          docker image inspect ${{ steps.prep.outputs.ghcr-tags }}
           if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
               echo 0 > ./outputs/ghcrpublish.check
               echo "'${{ steps.imgpublish.outputs.digest }}' found" > ./outputs/ghcrpublish.err
