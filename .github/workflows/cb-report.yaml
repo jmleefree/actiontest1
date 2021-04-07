@@ -300,7 +300,7 @@ jobs:
             summaryReport += '- revive(lint) : ' + reviveLintCnt + ' found\n'                               
 
             var coverageTotal = '-'
-            if (fs.existsSync('./coverage.total')) {
+            if (fs.existsSync('./cb-artifact/coverage.total')) {
               coverageTotal = fs.readFileSync('./cb-artifact/coverage.total', 'utf8')
               coverageTotal = coverageTotal.trim()
               if(coverageTotal == '') coverageTotal = '-'
