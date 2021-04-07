@@ -320,9 +320,7 @@ jobs:
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
-          sleep 10s
-
-          (docker image inspect ${{ steps.prep.outputs.ghcr-tags }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
+          (docker search ${{ steps.prep.outputs.ghcr-tags }} > ./outputs/ghcrpublish.err 2>&1; echo $? > ./outputs/ghcrpublish.check ) || true
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
             cat ./outputs/ghcrpublish.check
@@ -335,7 +333,7 @@ jobs:
           ghcrPublishCheck=`cat ./outputs/ghcrpublish.check`
           echo "::set-output name=ghcr_publish_check::${ghcrPublishCheck}"
 
-          (docker image inspect ${{ steps.prep.outputs.docker-tags }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
+          (docker search ${{ steps.prep.outputs.docker-tags }} > ./outputs/dockerpublish.err 2>&1; echo $? > ./outputs/dockerpublish.check ) || true
           if [ -f "./outputs/dockerpublish.check" ] ; then
             echo "======= dockerpublish.check ======="
             cat ./outputs/dockerpublish.check
