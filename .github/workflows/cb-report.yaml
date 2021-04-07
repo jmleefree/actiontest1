@@ -401,24 +401,24 @@ jobs:
           output: |
             ${{ steps.loadResultInfo.outputs.coverageErrReport }}
 
-      - name: Publish Build Results(Success)
+      - name: Go Build Results(Success)
         if: ${{ steps.loadResultInfo.outputs.buildCheck == 0 }}
         uses: LouisBrunner/checks-action@v1.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
-          name: Publish Build Results(Success)
+          name: Go Build Results(Success)
           conclusion: success
           output: |
             ${{ steps.loadResultInfo.outputs.buildSuccessReport }}
 
-      - name: Publish Build Results(Fail)
+      - name: Go Build Results(Fail)
         if: ${{ steps.loadResultInfo.outputs.buildCheck != 0 }}
         uses: LouisBrunner/checks-action@v1.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sha: ${{ github.event.workflow_run.head_commit.id }}
-          name: Publish Build Results(Fail)
+          name: Go Build Results(Fail)
           conclusion: failure
           output: |
             ${{ steps.loadResultInfo.outputs.buildErrReport }}
