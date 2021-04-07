@@ -154,14 +154,28 @@ jobs:
 
             var buildErr = ''
             if (fs.existsSync('./cb-artifact-1.13/build.err.1.13')) {
-              buildErr += '\nGolang 1.13 Build Error Raised\n'
-              buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./cb-artifact-1.13/build.err.1.13', 'utf8')
+              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.13/build.check.1.13', 'utf8'))
+              if(buildCheckTmp == 0) {
+                buildErr += '\nGolang 1.13 Build Success\n'
+                buildErr += '------------------------------\n'
+                buildErr += fs.readFileSync('./cb-artifact-1.13/build.err.1.13', 'utf8')
+              } else {
+                buildErr += '\nGolang 1.13 Build Error Raised\n'
+                buildErr += '------------------------------\n'
+                buildErr += fs.readFileSync('./cb-artifact-1.13/build.err.1.13', 'utf8')              
+              }
             }
             if (fs.existsSync('./cb-artifact-1.14/build.err.1.14')) {
-              buildErr += '\nGolang 1.14 Build Error Raised\n'
-              buildErr += '------------------------------\n'
-              buildErr += fs.readFileSync('./cb-artifact-1.14/build.err.1.14', 'utf8')
+              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.14/build.check.1.14', 'utf8'))
+              if(buildCheckTmp == 0) {
+                buildErr += '\nGolang 1.14 Build Success\n'
+                buildErr += '------------------------------\n'
+                buildErr += fs.readFileSync('./cb-artifact-1.14/build.err.1.14', 'utf8')
+              } else {
+                buildErr += '\nGolang 1.14 Build Error Raised\n'
+                buildErr += '------------------------------\n'
+                buildErr += fs.readFileSync('./cb-artifact-1.14/build.err.1.14', 'utf8')           
+              }
             }            
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
@@ -229,14 +243,28 @@ jobs:
 
             var publishErr = ''
             if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.err')) {
-              publishErr += '\nGitHub Container Registry Publish Error Raised\n'
-              publishErr += '------------------------------\n'
-              publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/ghcrpublish.check', 'utf8'))
+              if(publishCheckTmp == 0) {
+                publishErr += '\nGitHub Container Registry Publish Success\n'
+                publishErr += '------------------------------\n'
+                publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')
+              } else {
+                publishErr += '\nGitHub Container Registry Publish Error Raised\n'
+                publishErr += '------------------------------\n'
+                publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')                
+              }
             }
             if (fs.existsSync('./cb-artifact-deploy/dockerpublish.err')) {
-              publishErr += '\nDocker Hub Publish Error Raised\n'
-              publishErr += '------------------------------\n'
-              publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/dockerpublish.check', 'utf8'))
+              if(publishCheckTmp == 0) {
+                publishErr += '\nDocker Hub Publish Success\n'
+                publishErr += '------------------------------\n'
+                publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')
+              } else {
+                publishErr += '\nDocker Hub Publish Error Raised\n'
+                publishErr += '------------------------------\n'
+                publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')           
+              }
             }            
             console.log('publishErr', publishErr)   
             core.setOutput('publishErr', publishErr)      
