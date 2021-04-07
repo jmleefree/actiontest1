@@ -320,12 +320,13 @@ jobs:
         if: ${{ steps.imgbuild.outputs.docker_build_check == 0 }}
         id: imgcheck
         run: |
+          docker images
           if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
               echo 0 > ./outputs/ghcrpublish.check
-              echo "'${{ steps.imgpublish.outputs.digest }}' found"
+              echo "'${{ steps.imgpublish.outputs.digest }}' found" > ./outputs/ghcrpublish.err
           else
               echo 1 > ./outputs/ghcrpublish.check
-              echo "'${{ steps.imgpublish.outputs.digest }}' not found"
+              echo "'${{ steps.imgpublish.outputs.digest }}' not found" > ./outputs/ghcrpublish.err
           fi
           if [ -f "./outputs/ghcrpublish.check" ] ; then
             echo "======= ghcrpublish.check ======="
@@ -353,7 +354,6 @@ jobs:
           echo "::set-output name=docker_publish_check::${dockerPublishCheck}"
 
       - name: Upload Result
-        if: ${{ steps.imgcheck.outputs.docker_publish_check != 0 }}
         uses: actions/upload-artifact@v2
         with:
           name: cb-artifact-deploy
