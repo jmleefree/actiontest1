@@ -321,7 +321,7 @@ jobs:
         id: imgcheck
         run: |
           docker images
-          docker image inspect actiontes1
+          docker image inspect actiontest1
           if curl -s "https://github.com/users/jmleefree/packages/container/package/actiontest1" | grep -q "${{ steps.imgpublish.outputs.digest }}"; then
               echo 0 > ./outputs/ghcrpublish.check
               echo "'${{ steps.imgpublish.outputs.digest }}' found" > ./outputs/ghcrpublish.err
