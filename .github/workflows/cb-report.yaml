@@ -357,12 +357,12 @@ jobs:
           echo "hello world.." > ./publish/results/actiontest1/temp.txt
 
       - name: Publish generated content to GitHub Pages
-        uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          dir: ./publish
-          branch: main
-          repo: jmleefree/pagetest1
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          deploy_key: ${{ secrets.REPO_ACCESS_TOKEN }}
+          external_repository: jmleefree/pagetest1
+          publish_branch: main
+          publish_dir: ./publish
 
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
