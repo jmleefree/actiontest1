@@ -359,10 +359,11 @@ jobs:
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          deploy_key: ${{ secrets.REPO_ACCESS_TOKEN }}
+          personal_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           external_repository: jmleefree/pagetest1
           publish_branch: main
           publish_dir: ./publish
+          commit_message: "test result commit"
 
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
