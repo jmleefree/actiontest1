@@ -351,13 +351,16 @@ jobs:
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
+            mkdir -p ./publish/results/actiontest1
+            echo "hello world.." > ./publish/results/actiontest1/temp.txt
+
       - name: Publish generated content to GitHub Pages
         uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
         with:
-          dir: ./cb-artifact
-          branch: gh-pages
+          dir: ./publish
+          branch: main
           repo: jmleefree/pagetest1
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
 
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
