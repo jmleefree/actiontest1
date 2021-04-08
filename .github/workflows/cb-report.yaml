@@ -351,8 +351,10 @@ jobs:
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
-            mkdir -p ./publish/results/actiontest1
-            echo "hello world.." > ./publish/results/actiontest1/temp.txt
+      - name: Make Sample Report
+        run: |
+          mkdir -p ./publish/results/actiontest1
+          echo "hello world.." > ./publish/results/actiontest1/temp.txt
 
       - name: Publish generated content to GitHub Pages
         uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
