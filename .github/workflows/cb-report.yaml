@@ -354,7 +354,7 @@ jobs:
       - name: Make Sample Report
         run: |
           mkdir -p ./publish/results/actiontest1
-          echo "hello world..222" > ./publish/results/actiontest1/temp.txt
+          echo "hello world..333" > ./publish/results/actiontest1/temp.txt
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -362,8 +362,8 @@ jobs:
           personal_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           external_repository: jmleefree/pagetest1
           publish_branch: main
-          publish_dir: ./publish/results/actiontest1
-          destination_dir: ./publish/results/actiontest1
+          publish_dir: ./publish
+          destination_dir: ./publish2
           keep_files: true
           enable_jekyll: false
           full_commit_message: "test result commit"
