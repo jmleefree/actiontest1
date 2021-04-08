@@ -31,8 +31,12 @@ jobs:
           workflow: cb-actions.yaml
           workflow_conclusion: success
 
+      - name: Make Publish Folder
+        run: |
+          mkdir -p ./cb-publish
+
       - name: Display structure of downloaded files
-        run: ls -R ./cb-artifact*
+        run: ls -R ./cb-*
 
       - name: Load Result Info
         id: loadResultInfo
@@ -352,9 +356,20 @@ jobs:
             core.setOutput('summaryReport', summaryReport)
 
       - name: Make Sample Report
-        run: |
-          mkdir -p ./publish/results/actiontest1
-          echo "hello world..333" > ./publish/results/actiontest1/temp.txt
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log(context)
+
+            var fs = require('fs');
+
+            var report = {}
+            report.title = "Report Title !!!"
+            report.data = "hello world..."
+            report.sha = context.sha
+
+            fs.writeFileSync('./cb-publish/sample.json', JSON.stringify(report), 'utf8');
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -362,8 +377,8 @@ jobs:
           personal_token: ${{ secrets.REPO_ACCESS_TOKEN }}
           external_repository: jmleefree/pagetest1
           publish_branch: main
-          publish_dir: ./publish
-          destination_dir: ./publish2
+          publish_dir: ./cb-publish
+          destination_dir: ./cb-publish/actiontest1
           keep_files: true
           enable_jekyll: false
           full_commit_message: "test result commit"
