@@ -27,7 +27,7 @@ jobs:
 
       - name: Sample Reports
         run: |
-          cat "self hosted runner success..." > ./outputs/hosted.check
+          echo "self hosted runner success..." > ./outputs/hosted.check
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
