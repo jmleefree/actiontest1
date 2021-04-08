@@ -351,6 +351,14 @@ jobs:
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
+      - name: Publish generated content to GitHub Pages
+        uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
+        with:
+          dir: ./cb-artifact
+          branch: gh-pages
+          repo: jmleefree/pagetest1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
         uses: EnricoMi/publish-unit-test-result-action@v1
