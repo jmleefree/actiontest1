@@ -363,7 +363,10 @@ jobs:
           external_repository: jmleefree/pagetest1
           publish_branch: main
           publish_dir: ./publish/results/actiontest1
-          commit_message: "test result commit"
+          destination_dir: ./publish/results/actiontest1
+          keep_files: true
+          enable_jekyll: false
+          full_commit_message: "test result commit"
 
       - name: Publish Unit Test Results(Success)
         if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
