@@ -25,16 +25,22 @@ jobs:
         run: |
           mkdir -p ./outputs
 
-      - name: Run Spider Server
-        env:
-          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
-          LOCALHOST: "OFF"
-          PLUGIN_SW: "OFF"
-          MEERKAT: "OFF"
-          CBSTORE_ROOT: "/home/runner/work/cb-spider"
-          CBLOG_ROOT: "/home/runner/work/cb-spider"
+      - name: Setup Spider Env
         run: |
-          cd /home/runner/work
+          cd ../..
+          WORK_DIR=`pwd`
+          echo "WORK_DIR=${WORK_DIR}" >> $GITHUB_ENV
+          echo "CBSPIDER_ROOT=${WORK_DIR}/cb-spider" >> $GITHUB_ENV
+          echo "LOCALHOST=OFF" >> $GITHUB_ENV
+          echo "PLUGIN_SW=OFF" >> $GITHUB_ENV
+          echo "MEERKAT=OFF" >> $GITHUB_ENV
+          echo "CBSTORE_ROOT=${WORK_DIR}/cb-spider" >> $GITHUB_ENV
+          echo "CBLOG_ROOT=${WORK_DIR}/cb-spider" >> $GITHUB_ENV
+          cd ${{ github.workspace }}
+
+      - name: Run Spider Server
+        run: |
+          cd ${{ env.WORK_DIR }}
           git clone https://github.com/cloud-barista/cb-spider.git
           cd ./cb-spider/api-runtime
           go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
