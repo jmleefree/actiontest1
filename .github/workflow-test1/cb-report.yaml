@@ -82,15 +82,15 @@ jobs:
             core.setOutput('reviveLintResultXml', reviveLintResultXml)                                                
 
             var unitTestCheck = 0
-            if (fs.existsSync('./cb-artifact-hosted/unit-test.check')) {
-              unitTestCheck = Number(fs.readFileSync('./cb-artifact-hosted/unit-test.check', 'utf8'))
+            if (fs.existsSync('./cb-artifact/unit-test.check')) {
+              unitTestCheck = Number(fs.readFileSync('./cb-artifact/unit-test.check', 'utf8'))
             }
             console.log('unitTestCheck', unitTestCheck)   
             core.setOutput('unitTestCheck', unitTestCheck)   
 
             var unitTestErr = ''
-            if (fs.existsSync('./cb-artifact-hosted/unit-test.err')) {
-              unitTestErr = fs.readFileSync('./cb-artifact-hosted/unit-test.err', 'utf8')
+            if (fs.existsSync('./cb-artifact/unit-test.err')) {
+              unitTestErr = fs.readFileSync('./cb-artifact/unit-test.err', 'utf8')
             }
             console.log('unitTestErr', unitTestErr)   
             core.setOutput('unitTestErr', unitTestErr)
@@ -103,8 +103,8 @@ jobs:
             }               
 
             var unitTestXml = ''
-            if (fs.existsSync('./cb-artifact-hosted/unit-tests.xml')) {
-              unitTestXml = fs.readFileSync('./cb-artifact-hosted/unit-tests.xml', 'utf8')
+            if (fs.existsSync('./cb-artifact/unit-tests.xml')) {
+              unitTestXml = fs.readFileSync('./cb-artifact/unit-tests.xml', 'utf8')
             }
             console.log('unitTestXml', unitTestXml)  
             core.setOutput('unitTestXml', unitTestXml)  
@@ -355,33 +355,121 @@ jobs:
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
-      - name: Make Sample Report
-        uses: actions/github-script@v3
+      - name: Publish Unit Test Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.unitTestCheck == 0 }}
+        uses: EnricoMi/publish-unit-test-result-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            console.log(context)
+          commit: ${{ github.event.workflow_run.head_commit.id }}
+          files: ./cb-artifact/unit-tests.xml
 
-            var fs = require('fs');
-
-            var report = {}
-            report.title = "Report Title !!!"
-            report.data = "hello world..."
-            report.sha = context.sha
-
-            fs.writeFileSync('./cb-publish/sample.json', JSON.stringify(report), 'utf8');
-
-      - name: Publish generated content to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Publish Unit Test Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.unitTestCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
         with:
-          personal_token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          external_repository: jmleefree/pagetest1
-          publish_branch: main
-          publish_dir: ./cb-publish
-          destination_dir: ./cb-publish/actiontest1
-          keep_files: true
-          enable_jekyll: false
-          full_commit_message: "test result commit"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Unit Test Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.unitTestErrReport }}
+
+      - name: Upload coverage report(Success)
+        if: ${{ steps.loadResultInfo.outputs.coverageCheck == 0 }}
+        uses: codecov/codecov-action@v1.3.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./cb-artifact/coverage.txt
+          flags: unittests
+          name: codecov-umbrella
+          override_commit: ${{ github.event.workflow_run.head_commit.id }}
+
+      - name: Publish Coverage Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.coverageCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Coverage Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.coverageSuccessReport }}
+
+      - name: Publish Coverage Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.coverageCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Coverage Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.coverageErrReport }}
+
+      - name: Go Build Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.buildCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Go Build Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.buildSuccessReport }}
+
+      - name: Go Build Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.buildCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Go Build Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.buildErrReport }}
+
+      - name: Docker Build Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.dockerBuildRun == 1 && steps.loadResultInfo.outputs.dockerBuildCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Docker Build Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.dockerBuildSuccessReport }}
+
+      - name: Docker Build Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.dockerBuildRun == 1 && steps.loadResultInfo.outputs.dockerBuildCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Docker Build Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.dockerBuildErrReport }}
+
+      - name: Publish Image Results(Success)
+        if: ${{ steps.loadResultInfo.outputs.publishRun == 1 && steps.loadResultInfo.outputs.publishCheck == 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Image Results(Success)
+          conclusion: success
+          output: |
+            ${{ steps.loadResultInfo.outputs.publishSuccessReport }}
+
+      - name: Publish Image Results(Fail)
+        if: ${{ steps.loadResultInfo.outputs.publishRun == 1 && steps.loadResultInfo.outputs.publishCheck != 0 }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ github.event.workflow_run.head_commit.id }}
+          name: Publish Image Results(Fail)
+          conclusion: failure
+          output: |
+            ${{ steps.loadResultInfo.outputs.publishErrReport }}
 
       - name: Publish Summary Results(PR)
         if: ${{ github.event.workflow_run.event == 'pull_request' }}

@@ -5,71 +5,6 @@ on:
   pull_request:
 
 jobs:
-  cb-ci-hosted-job:
-    name: CB-CI-HOSTED-JOB
-    runs-on: [self-hosted, linux, X64]
-    strategy:
-      matrix:
-        go: ["1.13"]
-    steps:
-      - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
-        run: |
-          echo 'workflow starting'
-
-      - uses: actions/checkout@v2
-
-      - name: Make Output Folder
-        run: |
-          mkdir -p ./outputs
-
-     - name: Run Spider Server
-        env:
-          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
-          LOCALHOST: "OFF"
-          PLUGIN_SW: "OFF"
-          MEERKAT: "OFF"
-          CBSTORE_ROOT: "/home/runner/work/cb-spider"
-          CBLOG_ROOT: "/home/runner/work/cb-spider"
-        run: |
-          cd /home/runner/work
-          git clone https://github.com/cloud-barista/cb-spider.git
-          cd ./cb-spider/api-runtime
-          go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
-          cd ${{ github.workspace }}
-
-          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
-          nc -zv localhost 2048
-
-      - name: Run Unit Test
-        env:
-          CBSTORE_ROOT: ${{ github.workspace }}
-          CBLOG_ROOT: ${{ github.workspace }}
-        run: |
-          go get -u github.com/jstemmer/go-junit-report
-          (go test -v ./... > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
-          cat ./outputs/unit-test.err | go-junit-report > ./outputs/unit-tests.xml
-          if [ -f "./outputs/unit-test.check" ] ; then
-            echo "======= unit-test.check ======="
-            cat ./outputs/unit-test.check
-          fi    
-          if [ -f "./outputs/unit-test.err" ] ; then
-            echo "======= unit-test.err ======="
-            cat ./outputs/unit-test.err
-          fi   
-          if [ -f "./outputs/unit-tests.xml" ] ; then
-            echo "======= unit-tests.xml ======="
-            cat ./outputs/unit-tests.xml
-          fi
-
-      - name: Upload Result
-        uses: actions/upload-artifact@v2
-        with:
-          name: cb-artifact-hosted
-          path: outputs/
-
   cb-ci-test-job:
     name: CB-CI-TEST-JOB
     runs-on: ubuntu-latest
@@ -146,7 +81,46 @@ jobs:
             cat ./outputs/revive-lint-result.xml
           fi
 
-       - name: Run Coverage
+      - name: Run Spider Server
+        env:
+          CBSPIDER_ROOT: "/home/runner/work/cb-spider"
+          LOCALHOST: "OFF"
+          PLUGIN_SW: "OFF"
+          MEERKAT: "OFF"
+          CBSTORE_ROOT: "/home/runner/work/cb-spider"
+          CBLOG_ROOT: "/home/runner/work/cb-spider"
+        run: |
+          cd /home/runner/work
+          git clone https://github.com/cloud-barista/cb-spider.git
+          cd ./cb-spider/api-runtime
+          go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
+          cd ${{ github.workspace }}
+
+          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
+          nc -zv localhost 2048
+
+      - name: Run Unit Test
+        env:
+          CBSTORE_ROOT: ${{ github.workspace }}
+          CBLOG_ROOT: ${{ github.workspace }}
+        run: |
+          go get -u github.com/jstemmer/go-junit-report
+          (go test -v ./... > ./outputs/unit-test.err 2>&1; echo $? > ./outputs/unit-test.check ) || true
+          cat ./outputs/unit-test.err | go-junit-report > ./outputs/unit-tests.xml
+          if [ -f "./outputs/unit-test.check" ] ; then
+            echo "======= unit-test.check ======="
+            cat ./outputs/unit-test.check
+          fi    
+          if [ -f "./outputs/unit-test.err" ] ; then
+            echo "======= unit-test.err ======="
+            cat ./outputs/unit-test.err
+          fi   
+          if [ -f "./outputs/unit-tests.xml" ] ; then
+            echo "======= unit-tests.xml ======="
+            cat ./outputs/unit-tests.xml
+          fi
+
+      - name: Run Coverage
         run: |
           (go test -v -covermode=count -coverprofile=./outputs/coverage.txt > ./outputs/coverage.err 2>&1; echo $? > ./outputs/coverage.check ) || true
           if [ -f "./outputs/coverage.check" ] ; then
