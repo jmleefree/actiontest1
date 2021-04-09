@@ -46,7 +46,7 @@ jobs:
           go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
           cd ${{ github.workspace }}
 
-          timeout 2m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
+          timeout 5m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
           nc -zv localhost 2048
 
       - name: Run Unit Test
