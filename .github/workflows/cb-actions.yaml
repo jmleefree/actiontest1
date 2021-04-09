@@ -146,7 +146,7 @@ jobs:
             cat ./outputs/revive-lint-result.xml
           fi
 
-       - name: Run Coverage
+      - name: Run Coverage
         run: |
           (go test -v -covermode=count -coverprofile=./outputs/coverage.txt > ./outputs/coverage.err 2>&1; echo $? > ./outputs/coverage.check ) || true
           if [ -f "./outputs/coverage.check" ] ; then
