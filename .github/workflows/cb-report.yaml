@@ -381,7 +381,7 @@ jobs:
             report.lint = {}
             report.lint.deadcode = {}
             report.lint.deadcode.cnt = '${{ steps.loadResultInfo.outputs.deadcodeLintCnt }}'
-            report.lint.deadcode.details = "'" + escape(${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}) + "'"
+            report.lint.deadcode.details = "'" + escape('${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}') + "'"
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
