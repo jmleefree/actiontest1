@@ -242,7 +242,7 @@ jobs:
 
   cb-ci-deploy-job:
     name: CB-CI-DEPLOY-JOB
-    if: ${{ github.event_name == 'skip' }}
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     needs: [cb-ci-build-job]
     strategy:
