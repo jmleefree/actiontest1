@@ -53,33 +53,33 @@ jobs:
             console.log('prNumber', prNumber)
             core.setOutput('prNumber', prNumber)
 
-            var deadcodeLintResultXml = ''
-            if (fs.existsSync('./cb-artifact/deadcode-lint-result.xml')) {
-              deadcodeLintResultXml = fs.readFileSync('./cb-artifact/deadcode-lint-result.xml', 'utf8')
+            var deadcodelLintResultTxt = ''
+            if (fs.existsSync('./cb-artifact/deadcode-lint-result.txt')) {
+              deadcodelLintResultTxt = fs.readFileSync('./cb-artifact/deadcode-lint-result.txt', 'utf8')
             }
-            console.log('deadcodeLintResultXml', deadcodeLintResultXml)  
-            core.setOutput('deadcodeLintResultXml', deadcodeLintResultXml)
+            console.log('deadcodelLintResultTxt', deadcodelLintResultTxt)  
+            core.setOutput('deadcodelLintResultTxt', deadcodelLintResultTxt)
 
-            var errcheckLintResultXml = ''
-            if (fs.existsSync('./cb-artifact/errcheck-lint-result.xml')) {
-              errcheckLintResultXml = fs.readFileSync('./cb-artifact/errcheck-lint-result.xml', 'utf8')
+            var errchecklLintResultTxt = ''
+            if (fs.existsSync('./cb-artifact/errcheck-lint-result.txt')) {
+              errchecklLintResultTxt = fs.readFileSync('./cb-artifact/errcheck-lint-result.txt', 'utf8')
             }
-            console.log('errcheckLintResultXml', errcheckLintResultXml)  
-            core.setOutput('errcheckLintResultXml', errcheckLintResultXml) 
+            console.log('errchecklLintResultTxt', errchecklLintResultTxt)  
+            core.setOutput('errchecklLintResultTxt', errchecklLintResultTxt) 
 
-            var gofmtLintResultXml = ''
-            if (fs.existsSync('./cb-artifact/gofmt-lint-result.xml')) {
-              gofmtLintResultXml = fs.readFileSync('./cb-artifact/gofmt-lint-result.xml', 'utf8')
+            var gofmtlLintResultTxt = ''
+            if (fs.existsSync('./cb-artifact/gofmt-lint-result.txt')) {
+              gofmtlLintResultTxt = fs.readFileSync('./cb-artifact/gofmt-lint-result.txt', 'utf8')
             }
-            console.log('gofmtLintResultXml', gofmtLintResultXml)  
-            core.setOutput('gofmtLintResultXml', gofmtLintResultXml)   
+            console.log('gofmtlLintResultTxt', gofmtlLintResultTxt)  
+            core.setOutput('gofmtlLintResultTxt', gofmtlLintResultTxt)   
 
-            var reviveLintResultXml = ''
-            if (fs.existsSync('./cb-artifact/revive-lint-result.xml')) {
-              reviveLintResultXml = fs.readFileSync('./cb-artifact/revive-lint-result.xml', 'utf8')
+            var revivelLintResultTxt = ''
+            if (fs.existsSync('./cb-artifact/revive-lint-result.txt')) {
+              revivelLintResultTxt = fs.readFileSync('./cb-artifact/revive-lint-result.txt', 'utf8')
             }
-            console.log('reviveLintResultXml', reviveLintResultXml)  
-            core.setOutput('reviveLintResultXml', reviveLintResultXml)                                                
+            console.log('revivelLintResultTxt', revivelLintResultTxt)  
+            core.setOutput('revivelLintResultTxt', revivelLintResultTxt)                                                
 
             var unitTestCheck = 0
             if (fs.existsSync('./cb-artifact-hosted/unit-test.check')) {
@@ -287,19 +287,19 @@ jobs:
 
             var summaryReport = '# Summary Result\n'
 
-            deadcodeLintCnt = (deadcodeLintResultXml.match(/source="/g) || []).length
+            deadcodeLintCnt = (deadcodelLintResultTxt.match(/(deadcode)/g) || []).length
             console.log('deadcodeLintCnt', deadcodeLintCnt) 
             summaryReport += '- deadcode(lint) : ' + deadcodeLintCnt + ' found\n'
 
-            errcheckLintCnt = (errcheckLintResultXml.match(/source="/g) || []).length
+            errcheckLintCnt = (errchecklLintResultTxt.match(/(errcheck)/g) || []).length
             console.log('errcheckLintCnt', errcheckLintCnt) 
             summaryReport += '- errcheck(lint) : ' + errcheckLintCnt + ' found\n'    
 
-            gofmtLintCnt = (gofmtLintResultXml.match(/source="/g) || []).length
+            gofmtLintCnt = (gofmtlLintResultTxt.match(/(gofmt)/g) || []).length
             console.log('gofmtLintCnt', gofmtLintCnt) 
             summaryReport += '- gofmt(lint) : ' + gofmtLintCnt + ' found\n'       
 
-            reviveLintCnt = (reviveLintResultXml.match(/source="/g) || []).length
+            reviveLintCnt = (revivelLintResultTxt.match(/(revive)/g) || []).length
             console.log('reviveLintCnt', reviveLintCnt) 
             summaryReport += '- revive(lint) : ' + reviveLintCnt + ' found\n'                               
 
