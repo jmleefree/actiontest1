@@ -25,8 +25,10 @@ jobs:
         run: |
           mkdir -p ./outputs
 
-      - name: Display structure of downloaded files
-        run: ls -al
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
 
       - name: Setup Spider Env
         run: |
