@@ -362,6 +362,13 @@ jobs:
           script: |
             console.log(context)
 
+            var dateObj = new Date();
+            var year = dateObj.getFullYear();
+            var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+            var date = ('0' + dateObj.getDate()).slice(-2);
+
+            var reportPath = context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
+
             var fs = require('fs');
 
             var report = {}
@@ -369,7 +376,7 @@ jobs:
             report.data = "hello world..."
             report.sha = context.sha
 
-            fs.writeFileSync('./cb-publish/sample.json', JSON.stringify(report), 'utf8');
+            fs.writeFileSync('./cb-publish/' + reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -378,7 +385,7 @@ jobs:
           external_repository: jmleefree/pagetest1
           publish_branch: main
           publish_dir: ./cb-publish
-          destination_dir: ./cb-publish/actiontest1
+          destination_dir: ./cb-publish
           keep_files: true
           enable_jekyll: false
           full_commit_message: "test result commit"
