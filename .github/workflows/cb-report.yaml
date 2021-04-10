@@ -312,7 +312,6 @@ jobs:
 
             summaryReport += '\n'
             summaryReport += '<a href="https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json" target="_blank" rel="noopener">[details]</a>\n'
-            summaryReport += '<a href="https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json" onclick="return ! window.open(this.href);">[details]</a>\n'
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
