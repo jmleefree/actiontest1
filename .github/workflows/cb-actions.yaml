@@ -174,6 +174,7 @@ jobs:
             cat ./outputs/coverage.txt
           fi
 
+          (go tool cover -html=./outputs/coverage.txt -o ./outputs/coverage.html) || true
           (go tool cover -func ./outputs/coverage.txt | grep total | awk '{print $3}' > ./outputs/coverage.total) || true
 
       - name: Upload Result
