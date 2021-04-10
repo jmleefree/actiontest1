@@ -300,6 +300,18 @@ jobs:
               summaryReport += '- deploy : -\n'
             }       
 
+            console.log(context)
+            console.log("https://jmleefree.github.io/pagetest1/")
+
+            var dateObj = new Date();
+            var year = dateObj.getFullYear();
+            var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+            var date = ('0' + dateObj.getDate()).slice(-2);
+
+            var reportPath = './cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
+
+            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });            
+
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
 
@@ -340,15 +352,6 @@ jobs:
             publishReport.deploy.publish.run = publishRun
             publishReport.deploy.publish.check = publishCheck
             publishReport.deploy.publish.details = publishErr
-
-            var dateObj = new Date();
-            var year = dateObj.getFullYear();
-            var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
-            var date = ('0' + dateObj.getDate()).slice(-2);
-
-            var reportPath = './cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
-
-            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(publishReport), 'utf8');
             fs.copyFileSync('./cb-artifact/coverage.html', reportPath + '/' + context.sha + '.html')
