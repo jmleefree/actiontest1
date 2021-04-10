@@ -63,6 +63,7 @@ jobs:
             }
             console.log('errchecklLintResultTxt', errchecklLintResultTxt)  
             core.setOutput('errchecklLintResultTxt', errchecklLintResultTxt) 
+            core.setOutput('errchecklLintResultTxtEscape', escape(errchecklLintResultTxt))
 
             var gofmtlLintResultTxt = ''
             if (fs.existsSync('./cb-artifact/gofmt-lint-result.txt')) {
@@ -70,13 +71,15 @@ jobs:
             }
             console.log('gofmtlLintResultTxt', gofmtlLintResultTxt)  
             core.setOutput('gofmtlLintResultTxt', gofmtlLintResultTxt)   
+            core.setOutput('gofmtlLintResultTxtEscape', escape(gofmtlLintResultTxt))
 
             var revivelLintResultTxt = ''
             if (fs.existsSync('./cb-artifact/revive-lint-result.txt')) {
               revivelLintResultTxt = fs.readFileSync('./cb-artifact/revive-lint-result.txt', 'utf8')
             }
             console.log('revivelLintResultTxt', revivelLintResultTxt)  
-            core.setOutput('revivelLintResultTxt', revivelLintResultTxt)                                                
+            core.setOutput('revivelLintResultTxt', revivelLintResultTxt)    
+            core.setOutput('revivelLintResultTxtEscape', escape(revivelLintResultTxt))                                            
 
             var unitTestCheck = 0
             if (fs.existsSync('./cb-artifact-hosted/unit-test.check')) {
@@ -91,13 +94,7 @@ jobs:
             }
             console.log('unitTestErr', unitTestErr)   
             core.setOutput('unitTestErr', unitTestErr)
-
-            if(unitTestCheck != 0) {
-              var report = {}
-              report.summary = "Unit Test Error Raised !!!"
-              report.text_description = unitTestErr
-              core.setOutput('unitTestErrReport', JSON.stringify(report))     
-            }               
+            core.setOutput('unitTestErrEscape', escape(unitTestErr))               
 
             var unitTestXml = ''
             if (fs.existsSync('./cb-artifact-hosted/unit-tests.xml')) {
@@ -119,18 +116,7 @@ jobs:
             }
             console.log('coverageErr', coverageErr) 
             core.setOutput('coverageErr', coverageErr)    
-
-            if(coverageCheck != 0) {
-              var report = {}
-              report.summary = "Coverage Error Raised !!!"
-              report.text_description = coverageErr
-              core.setOutput('coverageErrReport', JSON.stringify(report))     
-            } else {
-              var report = {}
-              report.summary = "You can check detailed code coverage by clicking on the badge icon to access the codecov site."
-              report.text_description = "[![codecov](https://codecov.io/gh/${{ github.repository }}/branch/${{ github.event.repository.default_branch }}/graph/badge.svg)](https://codecov.io/gh/${{ github.repository }})"
-              core.setOutput('coverageSuccessReport', JSON.stringify(report))
-            }                   
+            core.setOutput('coverageErrEscape', escape(coverageErr))
 
             var coverageTxt = ''
             if (fs.existsSync('./cb-artifact/coverage.txt')) {
@@ -180,18 +166,7 @@ jobs:
             }            
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
-
-            if(buildCheck != 0) {
-              var report = {}
-              report.summary = "Build Error Raised !!!"
-              report.text_description = buildErr
-              core.setOutput('buildErrReport', JSON.stringify(report))     
-            } else {
-              var report = {}
-              report.summary = "Build Success !!!"
-              report.text_description = ''
-              core.setOutput('buildSuccessReport', JSON.stringify(report))                
-            }
+            core.setOutput('buildErrEscape', escape(buildErr))
 
             var dockerBuildRun = 0
             var dockerBuildCheck = 0
@@ -210,18 +185,7 @@ jobs:
             }
             console.log('dockerBuildErr', dockerBuildErr)   
             core.setOutput('dockerBuildErr', dockerBuildErr)
-
-            if(dockerBuildCheck != 0) {
-              var report = {}
-              report.summary = "Docker Build Error Raised !!!"
-              report.text_description = dockerBuildErr
-              core.setOutput('dockerBuildErrReport', JSON.stringify(report))  
-            } else {
-              var report = {}
-              report.summary = "Docker Build Success !!!"
-              report.text_description = ''
-              core.setOutput('dockerBuildSuccessReport', JSON.stringify(report))
-            } 
+            core.setOutput('dockerBuildErrEscape', escape(dockerBuildErr))
 
             var publishRun = 0
             var publishCheck = 0
@@ -269,18 +233,7 @@ jobs:
             }            
             console.log('publishErr', publishErr)   
             core.setOutput('publishErr', publishErr)      
-
-            if(publishCheck != 0) {
-              var report = {}
-              report.summary = "Publish Image Error Raised !!!"
-              report.text_description = publishErr
-              core.setOutput('publishErrReport', JSON.stringify(report))     
-            } else {
-              var report = {}
-              report.summary = "Publish Image Success !!!"
-              report.text_description = ''
-              core.setOutput('publishSuccessReport', JSON.stringify(report))                
-            }                  
+            core.setOutput('publishErrEscape', escape(publishErr))
 
             var summaryReport = '# Summary Result\n'
 
@@ -358,6 +311,15 @@ jobs:
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
+
+            var report = {}
+            report.version = '1.0'
+            report.lint = {}
+            report.lint.deadcode = {}
+            report.lint.deadcode.cnt = deadcodeLintCnt
+            report.lint.deadcode.details = deadcodelLintResultTxt        
+
+             console.log(JSON.stringify(report))
 
       - name: Make Sample Report
         uses: actions/github-script@v3
