@@ -310,7 +310,7 @@ jobs:
 
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true }); 
 
-            summaryReport += '[details](https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json){:target="_blank"}\n'
+            summaryReport += '<a href="https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json" target="_blank">[details]</a>\n'
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
