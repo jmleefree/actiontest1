@@ -31,10 +31,6 @@ jobs:
           workflow: cb-actions.yaml
           workflow_conclusion: success
 
-      - name: Make Publish Folder
-        run: |
-          mkdir -p ./cb-publish
-
       - name: Display structure of downloaded files
         run: ls -R ./cb-*
 
@@ -289,18 +285,22 @@ jobs:
 
             deadcodeLintCnt = (deadcodelLintResultTxt.match(/(deadcode)/g) || []).length
             console.log('deadcodeLintCnt', deadcodeLintCnt) 
+            core.setOutput('deadcodeLintCnt', deadcodeLintCnt)  
             summaryReport += '- deadcode(lint) : ' + deadcodeLintCnt + ' found\n'
 
             errcheckLintCnt = (errchecklLintResultTxt.match(/(errcheck)/g) || []).length
             console.log('errcheckLintCnt', errcheckLintCnt) 
+            core.setOutput('errcheckLintCnt', errcheckLintCnt)  
             summaryReport += '- errcheck(lint) : ' + errcheckLintCnt + ' found\n'    
 
             gofmtLintCnt = (gofmtlLintResultTxt.match(/(gofmt)/g) || []).length
             console.log('gofmtLintCnt', gofmtLintCnt) 
+            core.setOutput('gofmtLintCnt', gofmtLintCnt)  
             summaryReport += '- gofmt(lint) : ' + gofmtLintCnt + ' found\n'       
 
             reviveLintCnt = (revivelLintResultTxt.match(/(revive)/g) || []).length
             console.log('reviveLintCnt', reviveLintCnt) 
+            core.setOutput('reviveLintCnt', reviveLintCnt)  
             summaryReport += '- revive(lint) : ' + reviveLintCnt + ' found\n'                               
 
             var coverageTotal = '-'
@@ -310,6 +310,7 @@ jobs:
               if(coverageTotal == '') coverageTotal = '-'
             }
             console.log('coverageTotal', coverageTotal) 
+            core.setOutput('coverageTotal', coverageTotal)  
             summaryReport += '- coverage total : ' + coverageTotal + '\n'
 
             var testCaseAllCnt = 0
@@ -323,7 +324,9 @@ jobs:
               testCaseFailCnt += Number(current.pop())
             }
             console.log('testCaseAllCnt', testCaseAllCnt) 
+            core.setOutput('testCaseAllCnt', testCaseAllCnt)  
             console.log('testCaseFailCnt', testCaseFailCnt) 
+            core.setOutput('testCaseFailCnt', testCaseFailCnt)  
             summaryReport += '- junt test : ' + testCaseAllCnt + ' tests, ' + testCaseFailCnt + ' failure\n'
 
             if(buildCheck != 0) {
@@ -374,9 +377,11 @@ jobs:
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
             var report = {}
-            report.title = "Report Title !!!"
-            report.data = "hello world..."
-            report.sha = context.sha
+            report.version = "1.0"
+            report.lint = {}
+            report.lint.deadcode = {}
+            report.lint.deadcode.cnt = ${{ steps.loadResultInfo.outputs.deadcodeLintCnt }}
+            report.lint.deadcode.details = ${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
