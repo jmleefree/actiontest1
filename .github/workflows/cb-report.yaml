@@ -378,7 +378,7 @@ jobs:
 
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
-            var deadcodelLintResultTxt = '${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}'
+            var deadcodelLintResultTxt = `${ steps.loadResultInfo.outputs.deadcodelLintResultTxt }`
 
             var report = {}
             report.version = '1.0'
