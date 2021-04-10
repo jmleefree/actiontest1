@@ -54,7 +54,9 @@ jobs:
               deadcodelLintResultTxt = fs.readFileSync('./cb-artifact/deadcode-lint-result.txt', 'utf8')
             }
             console.log('deadcodelLintResultTxt', deadcodelLintResultTxt)  
+            console.log('deadcodelLintResultTxtEscape', escape(deadcodelLintResultTxt))  
             core.setOutput('deadcodelLintResultTxt', deadcodelLintResultTxt)
+            core.setOutput('deadcodelLintResultTxtEscape', deadcodelLintResultTxtEscape)
 
             var errchecklLintResultTxt = ''
             if (fs.existsSync('./cb-artifact/errcheck-lint-result.txt')) {
