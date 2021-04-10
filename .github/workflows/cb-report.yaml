@@ -351,6 +351,7 @@ jobs:
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(publishReport), 'utf8');
+            fs.copyFileSync('./cb-artifact/coverage.html', reportPath + '/' + context.sha + '.html')
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
