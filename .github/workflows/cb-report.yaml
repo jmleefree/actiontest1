@@ -371,7 +371,7 @@ jobs:
 
             var reportPath = './cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
 
-            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath);
+            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
             var report = {}
             report.title = "Report Title !!!"
