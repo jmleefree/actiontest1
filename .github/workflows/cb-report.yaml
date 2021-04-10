@@ -40,6 +40,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            console.log(context)
             var fs = require('fs');
 
             var prNumber = 0
@@ -300,17 +301,16 @@ jobs:
               summaryReport += '- deploy : -\n'
             }       
 
-            console.log(context)
-            console.log("https://jmleefree.github.io/pagetest1/")
-
             var dateObj = new Date();
             var year = dateObj.getFullYear();
             var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
             var date = ('0' + dateObj.getDate()).slice(-2);
 
-            var reportPath = './cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
+            var reportPath = 'cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
 
-            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });            
+            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true }); 
+
+            summaryReport += '[details](https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json)\n'
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
