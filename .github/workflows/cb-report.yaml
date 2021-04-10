@@ -56,7 +56,7 @@ jobs:
             console.log('deadcodelLintResultTxt', deadcodelLintResultTxt)  
             console.log('deadcodelLintResultTxtEscape', escape(deadcodelLintResultTxt))  
             core.setOutput('deadcodelLintResultTxt', deadcodelLintResultTxt)
-            core.setOutput('deadcodelLintResultTxtEscape', deadcodelLintResultTxtEscape)
+            core.setOutput('deadcodelLintResultTxtEscape', escape(deadcodelLintResultTxt))
 
             var errchecklLintResultTxt = ''
             if (fs.existsSync('./cb-artifact/errcheck-lint-result.txt')) {
@@ -378,12 +378,14 @@ jobs:
 
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
+            var deadcodelLintResultTxt = '${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}'
+
             var report = {}
             report.version = '1.0'
             report.lint = {}
             report.lint.deadcode = {}
             report.lint.deadcode.cnt = '${{ steps.loadResultInfo.outputs.deadcodeLintCnt }}'
-            report.lint.deadcode.details = "'" + escape('${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}') + "'"
+            report.lint.deadcode.details = "'" + escape(deadcodelLintResultTxt) + "'"
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
