@@ -45,6 +45,7 @@ jobs:
         run: |
           cd ${{ env.WORK_DIR }}
           echo "test 1111111"
+          rm -rf ./cb-spider
           git clone https://github.com/cloud-barista/cb-spider.git
           echo "test 2222222"
           cd ./cb-spider/api-runtime
