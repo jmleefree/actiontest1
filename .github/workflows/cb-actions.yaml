@@ -46,14 +46,10 @@ jobs:
       - name: Run Spider Server
         run: |
           cd ${{ env.WORK_DIR }}
-          echo "test 1111111"
           rm -rf ./cb-spider
           git clone https://github.com/cloud-barista/cb-spider.git
-          echo "test 2222222"
           cd ./cb-spider/api-runtime
-          echo "test 333333"
           go run apiserver.go > ${{ github.workspace }}/outputs/cb-spider.log 2>&1 &
-          echo "test 4444444"
           cd ${{ github.workspace }}
 
           timeout 5m sh -c 'until nc -z $0 $1; do sleep 1; done' localhost 2048
