@@ -54,7 +54,6 @@ jobs:
               deadcodelLintResultTxt = fs.readFileSync('./cb-artifact/deadcode-lint-result.txt', 'utf8')
             }
             console.log('deadcodelLintResultTxt', deadcodelLintResultTxt)  
-            console.log('deadcodelLintResultTxtEscape', escape(deadcodelLintResultTxt))  
             core.setOutput('deadcodelLintResultTxt', deadcodelLintResultTxt)
             core.setOutput('deadcodelLintResultTxtEscape', escape(deadcodelLintResultTxt))
 
@@ -378,14 +377,12 @@ jobs:
 
             !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true });
 
-            var deadcodelLintResultTxt = `${{ steps.loadResultInfo.outputs.deadcodelLintResultTxt }}`
-
             var report = {}
             report.version = '1.0'
             report.lint = {}
             report.lint.deadcode = {}
             report.lint.deadcode.cnt = '${{ steps.loadResultInfo.outputs.deadcodeLintCnt }}'
-            report.lint.deadcode.details = "'" + escape(deadcodelLintResultTxt) + "'"
+            report.lint.deadcode.details = '${{ steps.loadResultInfo.outputs.deadcodelLintResultTxtEscape }}'
 
             fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
