@@ -301,17 +301,18 @@ jobs:
               summaryReport += '- deploy : -\n'
             }       
 
-            var dateObj = new Date();
-            var year = dateObj.getFullYear();
-            var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
-            var date = ('0' + dateObj.getDate()).slice(-2);
+            var dateObj = new Date()
+            var year = dateObj.getFullYear()
+            var month = ('0' + (dateObj.getMonth() + 1)).slice(-2)
+            var date = ('0' + dateObj.getDate()).slice(-2)
 
-            var reportPath = 'cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
+            var reportPath = 'cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date
 
-            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true }); 
+            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath, { recursive: true })
 
             summaryReport += '\n'
             summaryReport += '<a href="https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json" target="_blank" rel="noopener">[details]</a>\n'
+            summaryReport += '<a href="https://jmleefree.github.io/pagetest1/index.html?info=' + reportPath + '/' + context.sha + '.json" onclick="return ! window.open(this.href);">[details]</a>\n'
 
             console.log('summaryReport', summaryReport)   
             core.setOutput('summaryReport', summaryReport)
