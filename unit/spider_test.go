@@ -1,7 +1,6 @@
 package unit
 
 import (
-	"fmt"
 	"testing"
 
 	lib "actiontest1/lib"
@@ -40,13 +39,12 @@ func TestSpider(t *testing.T) {
 		t.Errorf("error raised: %v", err)
 	}
 
-	//t.Errorf("t.Errorf result : %v\n", result)
-	t.Logf("t.Logf result : %v\n", result)
+	//t.Logf("t.Logf result : %v\n", result)
 
-	fmt.Printf("fmt result : %v\n", result)
+	//fmt.Printf("fmt result : %v\n", result)
 
-	logger.Debug("logger debug print...\n")
-	logger.Info("logger info print...\n")
-	logger.Error("logger error print...\n")
+	//logger.Debug("logger debug print...\n")
+	logger.Info("logger result : %v\n", result)
+	//logger.Error("logger error print...\n")
 
 }

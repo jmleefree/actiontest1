@@ -1,5 +1,7 @@
 output:
-  format: checkstyle
+  # colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
+  # default is "colored-line-number"
+  format: colored-line-number
 
 linters-settings:
   errcheck:
