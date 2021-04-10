@@ -360,6 +360,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            var fs = require('fs');
+
             console.log(context)
 
             var dateObj = new Date();
@@ -367,16 +369,16 @@ jobs:
             var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
             var date = ('0' + dateObj.getDate()).slice(-2);
 
-            var reportPath = context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
+            var reportPath = './cb-publish/' + context.payload.repository.name + '/' + context.payload.workflow_run.head_branch + '/' + year + '/' + month + '/' + date;
 
-            var fs = require('fs');
+            !fs.existsSync(reportPath) && fs.mkdirSync(reportPath);
 
             var report = {}
             report.title = "Report Title !!!"
             report.data = "hello world..."
             report.sha = context.sha
 
-            fs.writeFileSync('./cb-publish/' + reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
+            fs.writeFileSync(reportPath + '/' + context.sha + '.json', JSON.stringify(report), 'utf8');
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
