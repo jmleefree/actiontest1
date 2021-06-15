@@ -21,9 +21,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(context)       
-            //console.log("${{github.ref}}")  
-            //core.setOutput('branch', ${{github.ref#refs/heads/}})
+            console.log(context)
 
       - name: Display cev
         run: |
