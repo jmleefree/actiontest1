@@ -21,10 +21,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             (async _ => {
-              console.log(${{github}})
-
               const { GITHUB_CONTEXT } = process.env
-              console.log(`Hello ${GITHUB_CONTEXT}`)
+              console.log('GITHUB_CONTEXT', `${GITHUB_CONTEXT}`)
+              console.log('GITHUB_CONTEXT2', GITHUB_CONTEXT)
+
               //console.log(context)       
               core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
