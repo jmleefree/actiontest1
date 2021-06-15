@@ -32,7 +32,7 @@ jobs:
               var res = await github.orgs.listForUser({username: context.actor})
               console.log('listForUser', res)
 
-              res = await github.orgs.checkCollaborator({
+              res = await github.repos.checkCollaborator({
                 owner: context.payload.repository.owner.login,
                 repo: context.payload.repository.name,
                 username: context.actor,
