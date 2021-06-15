@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	lib "actiontest1/lib"
+	"testing"
+)
 
 func TestSum(t *testing.T) {
 	total := Sum(5, 5)
@@ -17,7 +20,7 @@ func TestSum3(t *testing.T) {
 }
 
 func TestSum4(t *testing.T) {
-	total := Sum(5, 5)
+	total := lib.SumLib2(5, 5)
 	if total != 10 {
 		t.Errorf("Sum4 was incorrect, got: %d, want: %d.", total, 10)
 	}
