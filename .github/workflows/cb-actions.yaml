@@ -14,12 +14,15 @@ jobs:
     steps:
       - name: Check Environment variable
         id: cev
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             (async _ => {
-              console.log(context)       
+              console.log("${github}")
+              //console.log(context)       
               core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
               var author_association = ""
