@@ -22,7 +22,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log(context)       
-            console.log("${{github.ref#refs/heads/}}")  
+            //console.log("${{github.ref}}")  
             //core.setOutput('branch', ${{github.ref#refs/heads/}})
 
       - name: Display cev
