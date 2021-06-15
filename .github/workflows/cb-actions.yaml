@@ -26,24 +26,34 @@ jobs:
               console.log("context.actor", context.actor)
               console.log("owner.login", context.payload.repository.owner.login)
               if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
-
-              core.setOutput('author_association', author_association)
-
-              try {
-                var res = await github.orgs.checkMembershipForUser({org: "cloud-barista", username: "jmleefree"})
-                console.log('checkMembershipForUser', res)
-
-                res = await github.repos.checkCollaborator({
-                  owner: context.payload.repository.owner.login,
-                  repo: context.payload.repository.name,
-                  username: context.actor,
-                })
-                console.log('checkCollaborator', res)
-
-              } catch (e) {
-                console.log(e)
+              if(author_association == "") {        
+                try {
+                  res = await github.orgs.listMembers({org: "cloud-barista" })
+                  console.log('listMembers', res)
+                  if (res.status >= 200 && res.status < 300) {
+                    isMember = res.data.some(({ login }) => login === context.actor)
+                    if(isMember) author_association = "MEMBER"
+                  }                  
+                } catch (e) {
+                  console.log(e)
+                }              
               }
-
+              if(author_association == "") {        
+                try {
+                  res = await github.repos.listCollaborators({
+                    owner: context.payload.repository.owner.login,
+                    repo: context.payload.repository.name,
+                  })
+                  console.log('listCollaborators', res)
+                  if (res.status >= 200 && res.status < 300) {
+                    isCollaborator = res.data.some(({ login }) => login === context.actor)
+                    if(isCollaborator) author_association = "COLLABORATOR"
+                  }                   
+                } catch (e) {
+                  console.log(e)
+                }            
+              }              
+              core.setOutput('author_association', author_association)
 
             })();
 
