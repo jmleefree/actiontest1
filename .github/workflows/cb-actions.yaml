@@ -22,7 +22,7 @@ jobs:
           script: |
             (async _ => {
               console.log(${{github}})
-              console.log("${{GITHUB_CONTEXT}}")
+              console.log(`Hello ${GITHUB_CONTEXT}`)
               //console.log(context)       
               core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
