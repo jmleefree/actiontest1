@@ -13,18 +13,17 @@ jobs:
         go: ["1.13"]
     steps:
       - name: Check Environment variable
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          SECRETS: ${{ toJSON(secrets) }}
         id: cev
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(context)       
+            //console.log(context)       
             core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
             var author_association = ""
+            console.log("context.actor", context.actor)
+            console.log("owner.login", context.payload.repository.owner.login)
             if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
 
       - name: Display cev
