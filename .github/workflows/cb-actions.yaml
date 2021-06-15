@@ -22,8 +22,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             console.log(context)       
-            core.setOutput('branch', context.payload.ref.replace("refs/heads/", ""))
+            core.setOutput('branch', context.ref.replace("refs/heads/", ""))
+
+            var author_association = ""
+            if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
 
       - name: Display cev
         run: |
           echo "branch: ${{ steps.cev.outputs.branch }}"
+          echo "author_association: ${{ steps.cev.outputs.author_association }}"
