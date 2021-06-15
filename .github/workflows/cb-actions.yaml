@@ -29,8 +29,8 @@ jobs:
 
               core.setOutput('author_association', author_association)
 
-              var res = await github.orgs.listForUser({username: context.actor})
-              console.log('listForUser', res)
+              var res = await github.orgs.checkMembershipForUser({org: "cloud-barista", username: "jmleefree"})
+              console.log('checkMembershipForUser', res)
 
               res = await github.repos.checkCollaborator({
                 owner: context.payload.repository.owner.login,
