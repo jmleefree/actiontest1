@@ -23,6 +23,7 @@ jobs:
             (async _ => {
               const { GITHUB_CONTEXT } = process.env
               console.log('github', GITHUB_CONTEXT)
+              console.log('github.ref', GITHUB_CONTEXT.ref)
               console.log('context', context)       
               core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
