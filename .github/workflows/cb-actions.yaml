@@ -18,8 +18,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            //console.log(context)       
-            //core.setOutput('branch', context.ref.replace("refs/heads/", ""))
+            (async _ => {
+              console.log(context)       
+              core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
             //var author_association = ""
             //console.log("context.actor", context.actor)
@@ -28,7 +29,7 @@ jobs:
 
             //core.setOutput('author_association', author_association)
 
-            (async _ => {
+
               const res = await github.orgs.list()
               console.log('org list', res)
             })();
