@@ -15,7 +15,7 @@ jobs:
       - name: Check Environment variable
         id: cev
         env:
-          GITHUB_CONTEXT: ${{ github }}
+          GITHUB_CONTEXT: ${{ fromJSON(github) }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
