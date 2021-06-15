@@ -29,7 +29,7 @@ jobs:
             core.setOutput('author_association', author_association)
 
 
-            var res = octokit.rest.orgs.list()
+            var res = github.orgs.list()
             console.log('org list', res)
 
       - name: Display cev
