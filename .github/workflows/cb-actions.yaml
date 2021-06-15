@@ -23,7 +23,7 @@ jobs:
           script: |
             console.log(context)       
 
-            core.setOutput('branch', ${{GITHUB_REF#refs/heads/}})
+            core.setOutput('branch', ${{GITHUB_REF}})
 
       - name: Display cev
         run: |
