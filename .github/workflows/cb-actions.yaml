@@ -22,15 +22,14 @@ jobs:
               console.log(context)       
               core.setOutput('branch', context.ref.replace("refs/heads/", ""))
 
-            //var author_association = ""
-            //console.log("context.actor", context.actor)
-            //console.log("owner.login", context.payload.repository.owner.login)
-            //if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
+              var author_association = ""
+              console.log("context.actor", context.actor)
+              console.log("owner.login", context.payload.repository.owner.login)
+              if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
 
-            //core.setOutput('author_association', author_association)
+              core.setOutput('author_association', author_association)
 
-
-              const res = await github.orgs.list()
+              const res = await github.orgs.listForUser({context.actor})
               console.log('org list', res)
             })();
 
