@@ -29,7 +29,7 @@ jobs:
 
               core.setOutput('author_association', author_association)
 
-              const res = await github.orgs.listForUser({context.actor})
+              const res = await github.orgs.listForUser({username: context.actor})
               console.log('org list', res)
             })();
 
