@@ -28,9 +28,10 @@ jobs:
 
             core.setOutput('author_association', author_association)
 
-
-            var res = github.orgs.list()
-            console.log('org list', res)
+            (async _ => {
+              const res = await github.orgs.list()
+              console.log('org list', res)
+            })();
 
       - name: Display cev
         run: |
