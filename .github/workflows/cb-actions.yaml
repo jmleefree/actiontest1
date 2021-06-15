@@ -26,6 +26,12 @@ jobs:
             console.log("owner.login", context.payload.repository.owner.login)
             if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
 
+            core.setOutput('author_association', author_association)
+
+
+            var res = octokit.rest.orgs.list()
+            console.log('org list', res)
+
       - name: Display cev
         run: |
           echo "branch: ${{ steps.cev.outputs.branch }}"
