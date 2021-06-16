@@ -1,10 +1,10 @@
 name: CB-CI-ACTIONS-WORKFLOW
 
 on:
-  #push:
-  #pull_request:
+  push:
+  pull_request:
   schedule:
-    - cron: '0/5 * * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   cb-ci-env-job:
