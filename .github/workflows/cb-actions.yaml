@@ -23,10 +23,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             (async _ => {
-              //const { GITHUB_CONTEXT } = process.env
-              //console.log('github', GITHUB_CONTEXT)
-              //var github = JSON.parse(GITHUB_CONTEXT)
-              //console.log('github.ref', github.ref)
+              const { GITHUB_CONTEXT } = process.env
+              console.log('github', GITHUB_CONTEXT)
+              var github = JSON.parse(GITHUB_CONTEXT)
+              console.log('github.ref', github.ref)
 
               console.log('context', context)       
 
@@ -39,14 +39,18 @@ jobs:
 
               var author_association = ""
 
-              var actor = context.actor
-              var owner = context.payload.repository.owner.login
-              var repoName = context.payload.repository.name
+              actor = ""
+              owner = ""
+              repoName = ""
 
-              if(context.eventName == "schedule") 
-              {
+              if(context.eventName == "schedule") {
+                actor = context.actor
                 owner = github.repository_owner
-                repoName = github.repository..replace(actor+"/", "")
+                repoName = github.repository.replace(actor+"/", "")
+              } else {
+                actor = context.actor
+                owner = context.payload.repository.owner.login
+                repoName = context.payload.repository.name
               }
 
               console.log('actor', actor)
