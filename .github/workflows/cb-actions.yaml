@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   cb-ci-env-job:
@@ -25,20 +25,41 @@ jobs:
             (async _ => {
               const { GITHUB_CONTEXT } = process.env
               console.log('github', GITHUB_CONTEXT)
-              console.log('github.ref', GITHUB_CONTEXT.ref)
+              var github = JSON.parse(GITHUB_CONTEXT)
+              console.log('github.ref', github.ref)
+
               console.log('context', context)       
-              core.setOutput('branch', context.ref.replace("refs/heads/", ""))
+
+              var branch = ""
+              if(context.eventName == "pull_request") branch = context.payload.pull_request.base.ref
+              else if(context.eventName == "push") branch = context.ref.replace("refs/heads/", "")
+              else if(context.eventName == "schedule") branch = context.ref.replace("refs/heads/", "")
+              console.log('branch', branch)
+              core.setOutput('branch', branch)
 
               var author_association = ""
-              console.log("context.actor", context.actor)
-              console.log("owner.login", context.payload.repository.owner.login)
-              if(context.actor == context.payload.repository.owner.login) author_association = "OWNER"
+
+              var actor = context.actor
+              var owner = context.payload.repository.owner.login
+              var repoName = context.payload.repository.name
+
+              if(context.eventName == "schedule") 
+              {
+                owner = github.repository_owner
+                repoName = github.repository..replace(actor+"/", "")
+              }
+
+              console.log('actor', actor)
+              console.log('owner', owner)
+              console.log('repoName', repoName)
+
+              if(actor == owner) author_association = "OWNER"
               if(author_association == "") {        
                 try {
                   res = await github.orgs.listMembers({org: "cloud-barista" })
                   console.log('listMembers', res)
                   if (res.status >= 200 && res.status < 300) {
-                    isMember = res.data.some(({ login }) => login === context.actor)
+                    isMember = res.data.some(({ login }) => login === actor)
                     if(isMember) author_association = "MEMBER"
                   }                  
                 } catch (e) {
@@ -48,8 +69,8 @@ jobs:
               if(author_association == "") {        
                 try {
                   res = await github.repos.listCollaborators({
-                    owner: context.payload.repository.owner.login,
-                    repo: context.payload.repository.name,
+                    owner: owner,
+                    repo: repoName,
                   })
                   console.log('listCollaborators', res)
                   if (res.status >= 200 && res.status < 300) {
@@ -62,9 +83,20 @@ jobs:
               }              
               core.setOutput('author_association', author_association)
 
+              var skip_lint = false
+              var title = ""
+              if(context.eventName == "pull_request") title = context.payload.pull_request.title
+              else if(context.eventName == "push") title = context.payload.head_commit.message
+              else if(context.eventName == "schedule") title = ""
+              if( title.includes('[skip lint]')) skip_lint = true
+              console.log('title', title)
+              console.log('skip_lint', skip_lint)
+              core.setOutput('skip_lint', skip_lint)              
+
             })();
 
       - name: Display cev
         run: |
           echo "branch: ${{ steps.cev.outputs.branch }}"
           echo "author_association: ${{ steps.cev.outputs.author_association }}"
+          echo "skip_lint: ${{ steps.cev.outputs.skip_lint }}"
