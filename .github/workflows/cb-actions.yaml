@@ -23,10 +23,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             (async _ => {
-              const { GITHUB_CONTEXT } = process.env
-              console.log('github', GITHUB_CONTEXT)
-              var github = JSON.parse(GITHUB_CONTEXT)
-              console.log('github.ref', github.ref)
+              //const { GITHUB_CONTEXT } = process.env
+              //console.log('github', GITHUB_CONTEXT)
+              //var github = JSON.parse(GITHUB_CONTEXT)
+              //console.log('github.ref', github.ref)
 
               console.log('context', context)       
 
