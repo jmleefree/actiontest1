@@ -3,10 +3,10 @@ name: CB-CI-ACTIONS-WORKFLOW
 on:
   push:
   pull_request:
-  schedule:
-    # cron은 UTC 기준, 15시이면 한국시간 15+9 = 24시가 됨
-    #- cron: "0 15 * * *"
-    - cron: "*/10 * * * *"
+  #schedule:
+  # cron은 UTC 기준, 15시이면 한국시간 15+9 = 24시가 됨
+  #- cron: "0 15 * * *"
+  #- cron: "*/10 * * * *"
 
 jobs:
   cb-ci-env-job:
