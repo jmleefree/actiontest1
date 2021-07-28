@@ -22,4 +22,12 @@ do
     echo "" >> ./build.err
 done
 
+A=$(awk -F/ '{print $2}' <<< './cb-artifact-gobuild-1.16/build.check')
+echo $A
 
+B=$(awk -F- '{print $4}' <<< $A)
+echo $B
+
+C="./cb-artifact-gobuild-1.16/build.err"
+T="${C//build.err/build.check}"
+echo $T

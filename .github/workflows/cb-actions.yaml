@@ -207,9 +207,6 @@ jobs:
     strategy:
       matrix:
         go: ["1.14", "1.13"]
-    outputs:
-      build_1_13: ${{ steps.build.outputs.build_1_13 }}
-      build_1_14: ${{ steps.build.outputs.build_1_14 }}
     steps:
       - uses: actions/checkout@v2
 
@@ -233,16 +230,6 @@ jobs:
           if [ -f "./outputs/build.err" ] ; then
             echo "======= build.err ======="
             cat ./outputs/build.err
-          fi
-
-          buildCheck=`cat ./outputs/build.check`
-          if [ ${{ matrix.go }} == "1.13" ]; then
-              echo "Golang ${{ matrix.go }} Build Error !!!"
-              echo "::set-output name=build_1_13::${buildCheck}"
-          fi
-          if [ ${{ matrix.go }} == "1.14" ]; then
-              echo "Golang ${{ matrix.go }} Build Error !!!"
-              echo "::set-output name=build_1_14::${buildCheck}"
           fi
 
       - name: Upload Result
@@ -287,9 +274,23 @@ jobs:
           errfiles=`find ./cb-artifact-gobuild-*/build.err`
           for eachfile in $errfiles
           do
+              folder=$(awk -F/ '{print $2}' <<< $eachfile)
+              goVersion=$(awk -F- '{print $4}' <<< $folder)
+
+              checkFile="${eachfile//build.err/build.check}"
+              check=`cat $checkFile`
               err=`cat $eachfile`
-              echo "$eachfile : $err"
+
+              echo "$goVersion : $eachfile : $err"
+
               echo $eachfile >> ./outputs/build.err
+              echo "" >> ./outputs/build.err
+
+              if [ $check == "0" ]; then
+                  echo "Golang $goVersion Build Success !!!" >> ./outputs/build.err
+              else
+                  echo "Golang $goVersion Build Error !!!" >> ./outputs/build.err
+              fi              
               echo "" >> ./outputs/build.err
               echo $err >> ./outputs/build.err
               echo "" >> ./outputs/build.err
