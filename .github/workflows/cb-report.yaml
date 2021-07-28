@@ -121,44 +121,16 @@ jobs:
             core.setOutput('coverageTxt', coverageTxt)    
 
             var buildCheck = 0
-            if (fs.existsSync('./cb-artifact-1.13/build.check.1.13')) {
-              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.13/build.check.1.13', 'utf8'))
-              console.log('buildCheck.1.13', buildCheckTmp)   
-              if(buildCheckTmp != 0) buildCheck = 1
+            if (fs.existsSync('./cb-artifact-gobuild/build.check')) {
+              buildCheck = Number(fs.readFileSync('./cb-artifact-gobuild/build.check', 'utf8'))
             }
-            if (fs.existsSync('./cb-artifact-1.14/build.check.1.14')) {
-              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.14/build.check.1.14', 'utf8'))
-              console.log('buildCheck.1.14', buildCheckTmp)   
-              if(buildCheckTmp != 0) buildCheck = 1
-            }            
             console.log('buildCheck', buildCheck)   
             core.setOutput('buildCheck', buildCheck)   
 
             var buildErr = ''
-            if (fs.existsSync('./cb-artifact-1.13/build.err.1.13')) {
-              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.13/build.check.1.13', 'utf8'))
-              if(buildCheckTmp == 0) {
-                buildErr += '\nGolang 1.13 Build Success\n'
-                buildErr += '------------------------------\n'
-                buildErr += fs.readFileSync('./cb-artifact-1.13/build.err.1.13', 'utf8')
-              } else {
-                buildErr += '\nGolang 1.13 Build Error Raised\n'
-                buildErr += '------------------------------\n'
-                buildErr += fs.readFileSync('./cb-artifact-1.13/build.err.1.13', 'utf8')              
-              }
+            if (fs.existsSync('./cb-artifact-gobuild/build.err')) {
+              buildErr = fs.readFileSync('./cb-artifact-gobuild/build.err', 'utf8')
             }
-            if (fs.existsSync('./cb-artifact-1.14/build.err.1.14')) {
-              var buildCheckTmp = Number(fs.readFileSync('./cb-artifact-1.14/build.check.1.14', 'utf8'))
-              if(buildCheckTmp == 0) {
-                buildErr += '\nGolang 1.14 Build Success\n'
-                buildErr += '------------------------------\n'
-                buildErr += fs.readFileSync('./cb-artifact-1.14/build.err.1.14', 'utf8')
-              } else {
-                buildErr += '\nGolang 1.14 Build Error Raised\n'
-                buildErr += '------------------------------\n'
-                buildErr += fs.readFileSync('./cb-artifact-1.14/build.err.1.14', 'utf8')           
-              }
-            }            
             console.log('buildErr', buildErr)   
             core.setOutput('buildErr', buildErr)
 

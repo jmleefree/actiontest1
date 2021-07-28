@@ -1,0 +1,8 @@
+./gobuild-1.13/build.err
+
+go build 1.13 result
+
+./gobuild-1.14/build.err
+
+go build 1.14 result
+

@@ -225,17 +225,17 @@ jobs:
       - name: Run Build
         id: build
         run: |
-          (go build -o test > ./outputs/build.err.${{ matrix.go }} 2>&1; echo $? > ./outputs/build.check.${{ matrix.go }} ) || true
-          if [ -f "./outputs/build.check.${{ matrix.go }}" ] ; then
-            echo "======= build.check.${{ matrix.go }} ======="
-            cat ./outputs/build.check.${{ matrix.go }}
+          (go build -o test > ./outputs/build.err 2>&1; echo $? > ./outputs/build.check ) || true
+          if [ -f "./outputs/build.check" ] ; then
+            echo "======= build.check ======="
+            cat ./outputs/build.check
           fi    
-          if [ -f "./outputs/build.err.${{ matrix.go }}" ] ; then
-            echo "======= build.err.${{ matrix.go }} ======="
-            cat ./outputs/build.err.${{ matrix.go }}
+          if [ -f "./outputs/build.err" ] ; then
+            echo "======= build.err ======="
+            cat ./outputs/build.err
           fi
 
-          buildCheck=`cat ./outputs/build.check.${{ matrix.go }}`
+          buildCheck=`cat ./outputs/build.check`
           if [ ${{ matrix.go }} == "1.13" ]; then
               echo "Golang ${{ matrix.go }} Build Error !!!"
               echo "::set-output name=build_1_13::${buildCheck}"
@@ -255,6 +255,8 @@ jobs:
     name: CB-CI-BUILD-RESULT-JOB
     runs-on: ubuntu-latest
     needs: [cb-ci-env-job, cb-ci-build-matrix-job]
+    outputs:
+      go_build_check: ${{ steps.mergeresult.outputs.go_build_check }}
     steps:
       - name: Make Output Folder
         run: |
@@ -268,7 +270,30 @@ jobs:
       - name: Merge Build Result
         id: mergeresult
         run: |
-          echo "hello world"
+          buildCheck=0
+          checkfiles=`find ./cb-artifact-gobuild-*/build.check`
+          for eachfile in $checkfiles
+          do
+              check=`cat $eachfile`
+              echo "$eachfile : $check"
+              if [ $check != "0" ]; then
+                buildCheck=1
+              fi   
+          done
+
+          echo $buildCheck > ./outputs/build.check
+          echo "::set-output name=go_build_check::${buildCheck}"
+
+          errfiles=`find ./cb-artifact-gobuild-*/build.err`
+          for eachfile in $errfiles
+          do
+              err=`cat $eachfile`
+              echo "$eachfile : $err"
+              echo $eachfile >> ./outputs/build.err
+              echo "" >> ./outputs/build.err
+              echo $err >> ./outputs/build.err
+              echo "" >> ./outputs/build.err
+          done
 
       - name: Upload Result
         uses: actions/upload-artifact@v2
@@ -280,7 +305,7 @@ jobs:
     name: CB-CI-IMAGE-BUILD-JOB
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule'}}
     runs-on: ubuntu-latest
-    needs: [cb-ci-env-job, cb-ci-build-matrix-job]
+    needs: [cb-ci-env-job, cb-ci-build-result-job]
     outputs:
       docker_build_check: ${{ steps.imgbuild.outputs.docker_build_check }}
     steps:
@@ -314,9 +339,9 @@ jobs:
 
   cb-ci-image-deploy-job:
     name: CB-CI-IMAGE-DEPLOY-JOB
-    if: ${{ (github.event_name == 'push' || github.event_name == 'schedule') && needs.cb-ci-build-matrix-job.outputs.build_1_13 == 0 && needs.cb-ci-build-matrix-job.outputs.build_1_14 == 0 && needs.cb-ci-image-build-job.outputs.docker_build_check == 0}}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'schedule') && needs.cb-ci-build-result-job.outputs.go_build_check == 0 && needs.cb-ci-image-build-job.outputs.docker_build_check == 0}}
     runs-on: ubuntu-latest
-    needs: [cb-ci-env-job, cb-ci-build-matrix-job, cb-ci-image-build-job]
+    needs: [cb-ci-env-job, cb-ci-build-result-job, cb-ci-image-build-job]
     env:
       DOCKER_REPO: jmleefree
       IMAGE_NAME: actiontest1
