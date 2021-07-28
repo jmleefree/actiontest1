@@ -281,7 +281,7 @@ jobs:
           dockerBuildCheck=`cat ./outputs/dockerbuild.check`
           echo "::set-output name=docker_build_check::${dockerBuildCheck}"
 
-       - name: Upload Result
+      - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
           name: cb-artifact-image-build
