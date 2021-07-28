@@ -200,8 +200,8 @@ jobs:
           name: cb-artifact
           path: outputs/
 
-  cb-ci-build-job:
-    name: CB-CI-BUILD-JOB
+  cb-ci-build-matrix-job:
+    name: CB-CI-BUILD-MATRIX-JOB
     runs-on: ubuntu-latest
     needs: [cb-ci-env-job]
     strategy:
@@ -248,7 +248,32 @@ jobs:
       - name: Upload Result
         uses: actions/upload-artifact@v2
         with:
-          name: cb-artifact-${{ matrix.go }}
+          name: cb-artifact-gobuild-${{ matrix.go }}
+          path: outputs/
+
+  cb-ci-build-result-job:
+    name: CB-CI-BUILD-RESULT-JOB
+    runs-on: ubuntu-latest
+    needs: [cb-ci-env-job, cb-ci-build-matrix-job]
+    steps:
+      - name: Make Output Folder
+        run: |
+          mkdir -p ./outputs
+
+      - uses: actions/download-artifact@v2
+
+      - name: Display structure of downloaded files
+        run: ls -R ./cb-artifact-gobuild-*
+
+      - name: Merge Build Result
+        id: mergeresult
+        run: |
+          echo "hello world"
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-gobuild
           path: outputs/
 
   cb-ci-image-build-job:
