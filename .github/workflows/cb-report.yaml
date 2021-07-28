@@ -164,9 +164,9 @@ jobs:
 
             var dockerBuildRun = 0
             var dockerBuildCheck = 0
-            if (fs.existsSync('./cb-artifact-deploy/dockerbuild.check')) {
+            if (fs.existsSync('./cb-artifact-image-build/dockerbuild.check')) {
               dockerBuildRun = 1
-              dockerBuildCheck = Number(fs.readFileSync('./cb-artifact-deploy/dockerbuild.check', 'utf8'))
+              dockerBuildCheck = Number(fs.readFileSync('./cb-artifact-image-build/dockerbuild.check', 'utf8'))
             }
             console.log('dockerBuildRun', dockerBuildRun)   
             core.setOutput('dockerBuildRun', dockerBuildRun)             
@@ -174,23 +174,23 @@ jobs:
             core.setOutput('dockerBuildCheck', dockerBuildCheck)   
 
             var dockerBuildErr = ''
-            if (fs.existsSync('./cb-artifact-deploy/dockerbuild.err')) {
-              dockerBuildErr = fs.readFileSync('./cb-artifact-deploy/dockerbuild.err', 'utf8')
+            if (fs.existsSync('./cb-artifact-image-build/dockerbuild.err')) {
+              dockerBuildErr = fs.readFileSync('./cb-artifact-image-build/dockerbuild.err', 'utf8')
             }
             console.log('dockerBuildErr', dockerBuildErr)   
             core.setOutput('dockerBuildErr', dockerBuildErr)
 
             var publishRun = 0
             var publishCheck = 0
-            if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.check')) {
+            if (fs.existsSync('./cb-artifact-image-deploy/ghcrpublish.check')) {
               publishRun = 1
-              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/ghcrpublish.check', 'utf8'))
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-image-deploy/ghcrpublish.check', 'utf8'))
               console.log('ghcrPublishCheck', publishCheckTmp)   
               if(publishCheckTmp != 0) publishCheck = 1
             }
-            if (fs.existsSync('./cb-artifact-deploy/dockerpublish.check')) {
+            if (fs.existsSync('./cb-artifact-image-deploy/dockerpublish.check')) {
               publishRun = 1
-              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/dockerpublish.check', 'utf8'))
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-image-deploy/dockerpublish.check', 'utf8'))
               console.log('dockerPublishCheck', publishCheckTmp)   
               if(publishCheckTmp != 0) publishCheck = 1
             }      
@@ -200,28 +200,28 @@ jobs:
             core.setOutput('publishCheck', publishCheck) 
 
             var publishErr = ''
-            if (fs.existsSync('./cb-artifact-deploy/ghcrpublish.err')) {
-              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/ghcrpublish.check', 'utf8'))
+            if (fs.existsSync('./cb-artifact-image-deploy/ghcrpublish.err')) {
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-image-deploy/ghcrpublish.check', 'utf8'))
               if(publishCheckTmp == 0) {
                 publishErr += '\nGitHub Container Registry Publish Success\n'
                 publishErr += '------------------------------\n'
-                publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')
+                publishErr += fs.readFileSync('./cb-artifact-image-deploy/ghcrpublish.err', 'utf8')
               } else {
                 publishErr += '\nGitHub Container Registry Publish Error Raised\n'
                 publishErr += '------------------------------\n'
-                publishErr += fs.readFileSync('./cb-artifact-deploy/ghcrpublish.err', 'utf8')                
+                publishErr += fs.readFileSync('./cb-artifact-image-deploy/ghcrpublish.err', 'utf8')                
               }
             }
-            if (fs.existsSync('./cb-artifact-deploy/dockerpublish.err')) {
-              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-deploy/dockerpublish.check', 'utf8'))
+            if (fs.existsSync('./cb-artifact-image-deploy/dockerpublish.err')) {
+              var publishCheckTmp = Number(fs.readFileSync('./cb-artifact-image-deploy/dockerpublish.check', 'utf8'))
               if(publishCheckTmp == 0) {
                 publishErr += '\nDocker Hub Publish Success\n'
                 publishErr += '------------------------------\n'
-                publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')
+                publishErr += fs.readFileSync('./cb-artifact-image-deploy/dockerpublish.err', 'utf8')
               } else {
                 publishErr += '\nDocker Hub Publish Error Raised\n'
                 publishErr += '------------------------------\n'
-                publishErr += fs.readFileSync('./cb-artifact-deploy/dockerpublish.err', 'utf8')           
+                publishErr += fs.readFileSync('./cb-artifact-image-deploy/dockerpublish.err', 'utf8')           
               }
             }            
             console.log('publishErr', publishErr)   
