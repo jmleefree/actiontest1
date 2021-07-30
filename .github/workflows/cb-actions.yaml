@@ -128,13 +128,13 @@ jobs:
       - name: Setup Report Card
         run: |
           cd ../..
+          pwd
           git clone https://github.com/gojp/goreportcard.git   
           cd goreportcard
           make install
           go install ./cmd/goreportcard-cli
-
-          go run main.go &
           cd ${{ github.workspace }}
+          pwd
 
       - name: Setup golangci-lint
         run: |
