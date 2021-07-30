@@ -189,7 +189,7 @@ jobs:
 
       - name: Run Report Card
         run: |
-          goreportcard-cli -v
+          goreportcard-cli -v -j
 
       - name: Run Coverage
         run: |
