@@ -113,10 +113,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cb-ci-env-job]
     steps:
+      - name: Current PWD
+        run: |
+          pwd
+
       - uses: actions/checkout@v2
 
       - name: Make Output Folder
         run: |
+          pwd
           mkdir -p ./outputs
 
       - name: Setup Go
