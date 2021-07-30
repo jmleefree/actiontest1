@@ -113,10 +113,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cb-ci-env-job]
     steps:
-      - name: Current PWD
-        run: |
-          pwd
-
       - uses: actions/checkout@v2
 
       - name: Make Output Folder
@@ -128,6 +124,17 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "1.13"
+
+      - name: Setup Report Card
+        run: |
+          cd ../..
+          git clone https://github.com/gojp/goreportcard.git   
+          cd goreportcard
+          make install
+          go install ./cmd/goreportcard-cli
+
+          go run main.go &
+          cd ${{ github.workspace }}
 
       - name: Setup golangci-lint
         run: |
@@ -179,6 +186,10 @@ jobs:
             echo "======= revive-lint-result.txt ======="
             cat ./outputs/revive-lint-result.txt
           fi
+
+      - name: Run Report Card
+        run: |
+          goreportcard-cli -v
 
       - name: Run Coverage
         run: |
