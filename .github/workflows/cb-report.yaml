@@ -1,4 +1,4 @@
-name: CB-CI-CD-REPORTS-WORKFLOW
+name: CB-REPORTS-WORKFLOW
 
 on:
   workflow_run:
@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  cb-ci-cd-reports-job:
+  cb-reports-job:
     name: CB-CI-CD-REPORTS-JOB
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -649,10 +649,8 @@ jobs:
 
       - name: Publish Summary Results(Push)
         if: ${{ github.event.workflow_run.event == 'push' }}
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
         uses: peter-evans/commit-comment@v1
         with:
-          sha: 843dea1cc2e721163c20a5c876b5b155f7f3aa752
+          sha: ${{ github.event.workflow_run.head_sha }}
           body: |
             ${{ steps.loadResultInfo.outputs.summaryReport }}
