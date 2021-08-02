@@ -653,6 +653,6 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         uses: peter-evans/commit-comment@v1
         with:
-          sha: 843dea1cc2e721163c20a5c876b5b155f7f3aa75
+          sha: 843dea1cc2e721163c20a5c876b5b155f7f3aa752
           body: |
             ${{ steps.loadResultInfo.outputs.summaryReport }}
