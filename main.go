@@ -33,6 +33,7 @@ func main() {
 	fmt.Printf("result : %d\n", Sum(5, 6))
 	fmt.Printf("result : %d\n", Sum(5, 8))
 	fmt.Printf("result : %d\n", Sum(7, 8))
+	fmt.Printf("result : %d\n", Sum(8, 8))
 
 	customError() // UNCHECKED
 }
