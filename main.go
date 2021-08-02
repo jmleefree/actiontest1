@@ -31,6 +31,7 @@ func customError() error {
 func main() {
 	//test := 3
 	fmt.Printf("result : %d\n", Sum(5, 6))
+	fmt.Printf("result : %d\n", Sum(5, 7))
 
 	customError() // UNCHECKED
 }
