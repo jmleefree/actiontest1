@@ -9,9 +9,6 @@ on:
       - "**.go"
       - ".github/**"
   pull_request:
-    branches-ignore:
-      - main
-      - master
     paths:
       - "**.go"
       - ".github/**"
