@@ -34,7 +34,7 @@ func main() {
 	fmt.Printf("result : %d\n", Sum(5, 8))
 	fmt.Printf("result : %d\n", Sum(7, 8))
 	fmt.Printf("result : %d\n", Sum(8, 8))
-	fmt.Printf("result : %d\n", Sum(1, 1))
+	fmt.Printf("result : %d\n", Sum(1, 2))
 
 	customError() // UNCHECKED
 }
