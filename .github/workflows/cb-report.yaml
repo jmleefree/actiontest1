@@ -8,9 +8,9 @@ on:
 
 jobs:
   cb-reports-job:
-    name: CB-CI-CD-REPORTS-JOB
+    name: CB-REPORTS-JOB
+    if: ${{ github.repository_owner == 'jmleefree' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Download cb-ci-actions-artifact
         if: ${{ github.event.workflow.name == 'CB-CI-ACTIONS-WORKFLOW' }}
@@ -641,8 +641,6 @@ jobs:
 
       - name: Publish Summary Results(PR)
         if: ${{ github.event.workflow_run.event == 'pull_request' }}
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ steps.loadResultInfo.outputs.prNumber }}
@@ -651,8 +649,6 @@ jobs:
 
       - name: Publish Summary Results(Push)
         if: ${{ github.event.workflow_run.event == 'push' }}
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
         uses: peter-evans/commit-comment@v1
         with:
           sha: ${{ github.event.workflow_run.head_sha }}
