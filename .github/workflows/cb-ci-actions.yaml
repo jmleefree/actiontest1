@@ -392,7 +392,7 @@ jobs:
           name: cb-artifact-image-build
           path: outputs/
 
- cb-ci-echo-job:
+  cb-ci-echo-job:
     name: CB-CI-ECHO-JOB
     if: ${{ github.repository_owner == 'jmleefree' }}
     runs-on: ubuntu-latest
@@ -419,4 +419,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: cb-artifact-echo
-          path: outputs/          
+          path: outputs/
