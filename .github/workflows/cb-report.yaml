@@ -47,6 +47,31 @@ jobs:
             var fs = require('fs');
 
             //
+            // ECHO CHECK RESULT LOADING
+            //      
+            var echoRun = 0       
+            var echoCheck = 0
+            if (fs.existsSync('./cb-artifact-echo/echo.check')) {
+              echoRun = 1
+              echoCheck = Number(fs.readFileSync('./cb-artifact-echo/echo.check', 'utf8'))
+            }
+            //console.log('echoCheck', echoCheck)  
+            core.setOutput('echoCheck', echoCheck)   
+
+            //
+            // ECHO LOG RESULT LOADING
+            //             
+            var echoLog = ''
+            if (fs.existsSync('./cb-artifact-echo/echo.log')) {
+              echoLog = fs.readFileSync('./cb-artifact-echo/echo.log', 'utf8')
+            }
+            //console.log('echoLog', echoLog) 
+            core.setOutput('echoLog', echoLog)  
+
+
+
+
+            //
             // SELFHOST CHECK RESULT LOADING
             //      
             var selfHostRun = 0       
@@ -513,7 +538,17 @@ jobs:
               } 
             } else {
               summaryReport += '- self host runner : -\n'
-            }                          
+            } 
+
+            if(echoRun == 1) {
+              if(echoCheck != 0) {
+                summaryReport += '- echo : fail\n'
+              } else {
+                summaryReport += '- echo : success\n'
+              } 
+            } else {
+              summaryReport += '- echo : -\n'
+            }                                      
 
             var dateObj = new Date()
             var year = dateObj.getFullYear()
@@ -610,7 +645,11 @@ jobs:
             publishReport.selfhost = {}
             publishReport.selfhost.run = selfHostRun 
             publishReport.selfhost.check = selfHostCheck     
-            publishReport.selfhost.details = selfHostLog             
+            publishReport.selfhost.details = selfHostLog        
+            publishReport.echo = {}
+            publishReport.echo.run = echoRun 
+            publishReport.echo.check = echoCheck     
+            publishReport.echo.details = echoLog                   
 
             fs.writeFileSync(reportPath + '/' + jsonReportFile, JSON.stringify(publishReport), 'utf8')
             if (fs.existsSync('./cb-artifact-test/coverage.html')) {

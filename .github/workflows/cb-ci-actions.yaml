@@ -391,3 +391,32 @@ jobs:
         with:
           name: cb-artifact-image-build
           path: outputs/
+
+ cb-ci-echo-job:
+    name: CB-CI-ECHO-JOB
+    if: ${{ github.repository_owner == 'jmleefree' }}
+    runs-on: ubuntu-latest
+    needs: [cb-env-job]
+    steps:
+      - name: Make Output Folder
+        run: |
+          mkdir -p ./outputs
+
+      - name: Hello World
+        run: |
+          (echo "Hello World"  > ./outputs/echo.log 2>&1; echo $? > ./outputs/echo.check ) || true
+
+          if [ -f "./outputs/echo.check" ] ; then
+            echo "======= echo.check ======="
+            cat ./outputs/echo.check
+          fi    
+          if [ -f "./outputs/echo.log" ] ; then
+            echo "======= echo.log ======="
+            cat ./outputs/echo.log
+          fi
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v2
+        with:
+          name: cb-artifact-echo
+          path: outputs/          
